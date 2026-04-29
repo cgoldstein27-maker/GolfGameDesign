@@ -1953,6 +1953,47 @@
         persistOpenAiBaseFromField();
       });
     }
+    var btnTestApi = $("#btn-test-api");
+    if (btnTestApi) {
+      btnTestApi.addEventListener("click", function () {
+        var status = $("#api-test-status");
+        var apiKey = readApiKey();
+        if (!apiKey || apiKey.indexOf("sk-") !== 0) {
+          status.textContent = "Add a valid OpenAI API key first (starts with sk-).";
+          return;
+        }
+        status.textContent = "Testing OpenAI connection…";
+        btnTestApi.disabled = true;
+        openaiChatFetch(
+          apiKey,
+          {
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: "Reply with exactly: OK" }],
+            max_tokens: 5,
+            temperature: 0,
+          },
+          25000
+        )
+          .then(function (res) {
+            if (res.ok) {
+              status.textContent = "API connection successful. Your key and network are working.";
+              return;
+            }
+            return res.text().then(function (body) {
+              status.textContent =
+                "API reachable, but request failed (" + res.status + "). " + String(body || "").slice(0, 140);
+            });
+          })
+          .catch(function (err) {
+            status.textContent =
+              "Network/connectivity error while reaching OpenAI: " +
+              String((err && err.message) || err || "unknown error");
+          })
+          .finally(function () {
+            btnTestApi.disabled = false;
+          });
+      });
+    }
 
     var btnCreateGen = $("#btn-create-notes-gen");
     if (btnCreateGen) {

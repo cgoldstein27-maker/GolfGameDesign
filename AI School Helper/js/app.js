@@ -20,7 +20,7 @@ import {
   generateAdvancedQuiz,
 } from "./chat.js";
 import { fetchWikipediaContext } from "./web-research.js";
-import { OPENAI_API_BASE_STORAGE_KEY } from "./openai-api.js";
+import { OPENAI_API_BASE_STORAGE_KEY, fetchOpenAiChatCompletions } from "./openai-api.js";
 
 /** localStorage key for the optional OpenAI API key (never sent except to your chosen AI API by chat.js). */
 const OPENAI_STORAGE = "study-smart-openai-key";
@@ -851,6 +851,41 @@ function bindUi() {
   );
   $("#quiz-openai-key")?.addEventListener("change", () => persistOpenAiKeyFromField($("#quiz-openai-key")));
   $("#openai-api-base")?.addEventListener("change", persistOpenAiBaseFromField);
+  $("#btn-test-api")?.addEventListener("click", async () => {
+    const status = $("#api-test-status");
+    const btn = $("#btn-test-api");
+    const apiKey = readApiKey();
+    if (!apiKey || !apiKey.startsWith("sk-")) {
+      status.textContent = "Add a valid OpenAI API key first (starts with sk-).";
+      return;
+    }
+    status.textContent = "Testing OpenAI connection…";
+    if (btn) btn.disabled = true;
+    try {
+      const res = await fetchOpenAiChatCompletions(
+        apiKey,
+        {
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: "Reply with exactly: OK" }],
+          max_tokens: 5,
+          temperature: 0,
+        },
+        25000
+      );
+      if (res.ok) {
+        status.textContent = "API connection successful. Your key and network are working.";
+      } else {
+        const body = await res.text();
+        status.textContent = `API reachable, but request failed (${res.status}). ${body.slice(0, 140)}`;
+      }
+    } catch (err) {
+      status.textContent = `Network/connectivity error while reaching OpenAI: ${String(
+        err?.message || err || "unknown error"
+      )}`;
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  });
 
   $("#btn-create-notes-gen")?.addEventListener("click", async () => {
     const status = $("#create-notes-status");
