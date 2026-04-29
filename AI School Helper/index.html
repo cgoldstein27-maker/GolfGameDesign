@@ -144,7 +144,8 @@
             <h2>Research notes</h2>
             <p class="hint">
               Pick a topic and tell the AI how you want the notes shaped. The app pulls a matching
-              <strong>Wikipedia</strong> article when possible, then <strong>OpenAI</strong> writes study notes. Requires a key below (same storage as Ask notes).
+              <strong>Wikipedia</strong> article when possible, then <strong>OpenAI</strong> writes study notes.
+              Use the API settings section above to set your key once.
             </p>
             <label class="field narrow">
               <span>Save into</span>
@@ -161,10 +162,6 @@
             <label class="field field-row">
               <input type="checkbox" id="create-notes-use-web" checked />
               <span>Include Wikipedia reference (recommended; needs network)</span>
-            </label>
-            <label class="field">
-              <span>OpenAI API key (stored only in this browser)</span>
-              <input type="password" id="research-openai-key" placeholder="sk-…" autocomplete="off" />
             </label>
             <button type="button" class="btn primary" id="btn-create-notes-gen">Generate notes</button>
             <p id="create-notes-status" class="status" role="status"></p>
