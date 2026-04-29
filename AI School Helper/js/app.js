@@ -854,6 +854,7 @@ function bindUi() {
 
   $("#btn-create-notes-gen")?.addEventListener("click", async () => {
     const status = $("#create-notes-status");
+    const btn = $("#btn-create-notes-gen");
     const topic = $("#create-notes-topic").value.trim();
     const prompt = $("#create-notes-prompt").value.trim();
     const useWeb = $("#create-notes-use-web")?.checked !== false;
@@ -863,22 +864,31 @@ function bindUi() {
     }
     const apiKey = readApiKey();
     status.textContent = useWeb ? "Fetching Wikipedia reference…" : "Calling OpenAI…";
-    const result = await generateResearchNotes({
-      topic: topic || prompt.slice(0, 120),
-      userPrompt: prompt || `Write study notes on: ${topic}.`,
-      apiKey,
-      useWeb,
-    });
-    if (!result.ok) {
-      status.textContent = result.error;
-      return;
+    if (btn) btn.disabled = true;
+    try {
+      const result = await generateResearchNotes({
+        topic: topic || prompt.slice(0, 120),
+        userPrompt: prompt || `Write study notes on: ${topic}.`,
+        apiKey,
+        useWeb,
+      });
+      if (!result.ok) {
+        status.textContent = result.error;
+        return;
+      }
+      $("#create-notes-preview").value = result.text;
+      status.textContent = result.wikiUsed
+        ? `Notes generated using Wikipedia (“${result.wikiTitle}”) + OpenAI. Edit if needed, then save.`
+        : result.wikiTimedOut
+          ? "Wikipedia slow, continuing with notes-only. Notes generated from model knowledge; edit and save."
+          : "Notes generated (no Wikipedia match—model used general knowledge). Edit if needed, then save.";
+    } catch (err) {
+      status.textContent = `Could not generate notes right now. Check your internet/API key and try again. (${String(
+        err?.message || err || "unknown error"
+      )})`;
+    } finally {
+      if (btn) btn.disabled = false;
     }
-    $("#create-notes-preview").value = result.text;
-    status.textContent = result.wikiUsed
-      ? `Notes generated using Wikipedia (“${result.wikiTitle}”) + OpenAI. Edit if needed, then save.`
-      : result.wikiTimedOut
-        ? "Wikipedia slow, continuing with notes-only. Notes generated from model knowledge; edit and save."
-        : "Notes generated (no Wikipedia match—model used general knowledge). Edit if needed, then save.";
   });
 
   $("#btn-create-notes-save")?.addEventListener("click", () => {

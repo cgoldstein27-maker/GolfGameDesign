@@ -1968,6 +1968,7 @@
         }
         var apiKey = readApiKey();
         status.textContent = useWeb ? "Fetching Wikipedia reference\u2026" : "Calling OpenAI\u2026";
+        btnCreateGen.disabled = true;
         generateResearchNotes({
           topic: topic || prompt.slice(0, 120),
           userPrompt: prompt || "Write study notes on: " + topic + ".",
@@ -1986,6 +1987,13 @@
             : result.wikiTimedOut
               ? "Wikipedia slow, continuing with notes-only. Notes generated from model knowledge; edit and save."
               : "Notes generated (no Wikipedia match\u2014model used general knowledge). Edit if needed, then save.";
+        }).catch(function (err) {
+          status.textContent =
+            "Could not generate notes right now. Check your internet/API key and try again. (" +
+            String((err && err.message) || err || "unknown error") +
+            ")";
+        }).finally(function () {
+          btnCreateGen.disabled = false;
         });
       });
     }
