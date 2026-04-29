@@ -68,6 +68,23 @@
     </header>
 
     <main class="main">
+      <section class="card full">
+        <h2>API settings</h2>
+        <p class="hint">
+          Paste your OpenAI key once here. It is saved only in this browser and reused across AI features.
+        </p>
+        <div class="grid-2">
+          <label class="field">
+            <span>OpenAI API key</span>
+            <input type="password" id="openai-key" placeholder="sk-..." autocomplete="off" />
+          </label>
+          <label class="field">
+            <span>AI API base URL (optional)</span>
+            <input type="url" id="openai-api-base" placeholder="https://api.openai.com/v1" autocomplete="off" />
+          </label>
+        </div>
+      </section>
+
       <!-- Library -->
       <section id="panel-library" class="panel active" role="tabpanel">
         <div class="grid-2">
@@ -239,14 +256,6 @@
             <label class="field narrow">
               <span>Source set (optional)</span>
               <select id="chat-doc-select"></select>
-            </label>
-            <label class="field" hidden>
-              <span>OpenAI API key (optional, stored only in this browser)</span>
-              <input type="password" id="openai-key" placeholder="sk-…" autocomplete="off" />
-            </label>
-            <label class="field" hidden>
-              <span>AI API base URL (optional)</span>
-              <input type="url" id="openai-api-base" placeholder="https://api.openai.com/v1" autocomplete="off" />
             </label>
             <p class="hint">No API key required. Ask notes works in local mode using your saved sets.</p>
             <label class="field">
