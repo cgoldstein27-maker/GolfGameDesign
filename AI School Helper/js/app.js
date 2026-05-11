@@ -20,7 +20,7 @@ import {
   generateAdvancedQuiz,
 } from "./chat.js";
 import { fetchWikipediaContext } from "./web-research.js";
-import { OPENAI_API_BASE_STORAGE_KEY } from "./openai-api.js";
+import { OPENAI_API_BASE_STORAGE_KEY, fetchOpenAiChatCompletions } from "./openai-api.js";
 
 /** localStorage key for the optional OpenAI API key (never sent except to your chosen AI API by chat.js). */
 const OPENAI_STORAGE = "study-smart-openai-key";
@@ -329,6 +329,68 @@ function processAndSaveDoc(title, content) {
   renderActiveDoc();
   refreshSelectors();
   renderWeakTopics();
+}
+
+/** Cached AP-style starter topics loaded from `js/ap-starter-topics.json`. */
+let apStarterDataCache = null;
+
+async function loadApStarterData() {
+  if (apStarterDataCache) return apStarterDataCache;
+  const res = await fetch("js/ap-starter-topics.json", { cache: "force-cache" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  apStarterDataCache = await res.json();
+  return apStarterDataCache;
+}
+
+/** Course/topic pickers: load bundled starter outlines (no upload). */
+function wireApStarterPickers() {
+  const courseSel = $("#ap-starter-course");
+  const topicSel = $("#ap-starter-topic");
+  const btn = $("#btn-ap-starter-load");
+  const statusEl = $("#ap-starter-status");
+  if (!courseSel || !topicSel || !btn) return;
+
+  loadApStarterData()
+    .then((data) => {
+      const courses = data.courses || [];
+      courseSel.innerHTML = "";
+      for (const c of courses) {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = c.name;
+        courseSel.appendChild(opt);
+      }
+      const refillTopics = () => {
+        const cid = courseSel.value;
+        const course = courses.find((x) => x.id === cid);
+        topicSel.innerHTML = "";
+        if (!course?.topics?.length) return;
+        course.topics.forEach((t, idx) => {
+          const o = document.createElement("option");
+          o.value = String(idx);
+          o.textContent = t.title;
+          topicSel.appendChild(o);
+        });
+      };
+      courseSel.addEventListener("change", refillTopics);
+      refillTopics();
+      btn.addEventListener("click", () => {
+        const cid = courseSel.value;
+        const course = courses.find((x) => x.id === cid);
+        const tidx = Number.parseInt(topicSel.value, 10);
+        if (!course?.topics?.[tidx]) return;
+        const topic = course.topics[tidx];
+        processAndSaveDoc(topic.title, topic.content);
+        if (statusEl) statusEl.textContent = `Loaded “${topic.title}” into your library.`;
+      });
+      if (statusEl) statusEl.textContent = "Choose a topic, then click Add topic to library.";
+    })
+    .catch(() => {
+      if (statusEl) {
+        statusEl.textContent =
+          "Starter topics need a web server (GitHub Pages or python -m http.server). file:// cannot load the topic list.";
+      }
+    });
 }
 
 /** Replace an existing set’s body and rebuild chunks, summary, flashcards, and SRS rows. */
@@ -851,9 +913,45 @@ function bindUi() {
   );
   $("#quiz-openai-key")?.addEventListener("change", () => persistOpenAiKeyFromField($("#quiz-openai-key")));
   $("#openai-api-base")?.addEventListener("change", persistOpenAiBaseFromField);
+  $("#btn-test-api")?.addEventListener("click", async () => {
+    const status = $("#api-test-status");
+    const btn = $("#btn-test-api");
+    const apiKey = readApiKey();
+    if (!apiKey || !apiKey.startsWith("sk-")) {
+      status.textContent = "Add a valid OpenAI API key first (starts with sk-).";
+      return;
+    }
+    status.textContent = "Testing OpenAI connection…";
+    if (btn) btn.disabled = true;
+    try {
+      const res = await fetchOpenAiChatCompletions(
+        apiKey,
+        {
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: "Reply with exactly: OK" }],
+          max_tokens: 5,
+          temperature: 0,
+        },
+        25000
+      );
+      if (res.ok) {
+        status.textContent = "API connection successful. Your key and network are working.";
+      } else {
+        const body = await res.text();
+        status.textContent = `API reachable, but request failed (${res.status}). ${body.slice(0, 140)}`;
+      }
+    } catch (err) {
+      status.textContent = `Network/connectivity error while reaching OpenAI: ${String(
+        err?.message || err || "unknown error"
+      )}`;
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  });
 
   $("#btn-create-notes-gen")?.addEventListener("click", async () => {
     const status = $("#create-notes-status");
+    const btn = $("#btn-create-notes-gen");
     const topic = $("#create-notes-topic").value.trim();
     const prompt = $("#create-notes-prompt").value.trim();
     const useWeb = $("#create-notes-use-web")?.checked !== false;
@@ -863,22 +961,31 @@ function bindUi() {
     }
     const apiKey = readApiKey();
     status.textContent = useWeb ? "Fetching Wikipedia reference…" : "Calling OpenAI…";
-    const result = await generateResearchNotes({
-      topic: topic || prompt.slice(0, 120),
-      userPrompt: prompt || `Write study notes on: ${topic}.`,
-      apiKey,
-      useWeb,
-    });
-    if (!result.ok) {
-      status.textContent = result.error;
-      return;
+    if (btn) btn.disabled = true;
+    try {
+      const result = await generateResearchNotes({
+        topic: topic || prompt.slice(0, 120),
+        userPrompt: prompt || `Write study notes on: ${topic}.`,
+        apiKey,
+        useWeb,
+      });
+      if (!result.ok) {
+        status.textContent = result.error;
+        return;
+      }
+      $("#create-notes-preview").value = result.text;
+      status.textContent = result.wikiUsed
+        ? `Notes generated using Wikipedia (“${result.wikiTitle}”) + OpenAI. Edit if needed, then save.`
+        : result.wikiTimedOut
+          ? "Wikipedia slow, continuing with notes-only. Notes generated from model knowledge; edit and save."
+          : "Notes generated (no Wikipedia match—model used general knowledge). Edit if needed, then save.";
+    } catch (err) {
+      status.textContent = `Could not generate notes right now. Check your internet/API key and try again. (${String(
+        err?.message || err || "unknown error"
+      )})`;
+    } finally {
+      if (btn) btn.disabled = false;
     }
-    $("#create-notes-preview").value = result.text;
-    status.textContent = result.wikiUsed
-      ? `Notes generated using Wikipedia (“${result.wikiTitle}”) + OpenAI. Edit if needed, then save.`
-      : result.wikiTimedOut
-        ? "Wikipedia slow, continuing with notes-only. Notes generated from model knowledge; edit and save."
-        : "Notes generated (no Wikipedia match—model used general knowledge). Edit if needed, then save.";
   });
 
   $("#btn-create-notes-save")?.addEventListener("click", () => {
@@ -951,6 +1058,8 @@ function bindUi() {
       appendChat("bot", String(e?.message || e), []);
     }
   });
+
+  wireApStarterPickers();
 }
 
 function initMainApp() {

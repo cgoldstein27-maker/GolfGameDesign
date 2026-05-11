@@ -1395,6 +1395,83 @@
     renderWeakTopics();
   }
 
+  var apStarterDataCache = null;
+  function loadApStarterData() {
+    if (apStarterDataCache) return Promise.resolve(apStarterDataCache);
+    return fetch("js/ap-starter-topics.json", { cache: "force-cache" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        apStarterDataCache = data;
+        return data;
+      });
+  }
+
+  function wireApStarterPickers() {
+    var courseSel = $("#ap-starter-course");
+    var topicSel = $("#ap-starter-topic");
+    var btn = $("#btn-ap-starter-load");
+    var statusEl = $("#ap-starter-status");
+    if (!courseSel || !topicSel || !btn) return;
+    loadApStarterData()
+      .then(function (data) {
+        var courses = data.courses || [];
+        courseSel.innerHTML = "";
+        for (var i = 0; i < courses.length; i++) {
+          var c = courses[i];
+          var opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent = c.name;
+          courseSel.appendChild(opt);
+        }
+        function refillTopics() {
+          var cid = courseSel.value;
+          var course = null;
+          for (var j = 0; j < courses.length; j++) {
+            if (courses[j].id === cid) {
+              course = courses[j];
+              break;
+            }
+          }
+          topicSel.innerHTML = "";
+          if (!course || !course.topics || !course.topics.length) return;
+          for (var k = 0; k < course.topics.length; k++) {
+            var t = course.topics[k];
+            var o = document.createElement("option");
+            o.value = String(k);
+            o.textContent = t.title;
+            topicSel.appendChild(o);
+          }
+        }
+        courseSel.addEventListener("change", refillTopics);
+        refillTopics();
+        btn.addEventListener("click", function () {
+          var cid = courseSel.value;
+          var course = null;
+          for (var j = 0; j < courses.length; j++) {
+            if (courses[j].id === cid) {
+              course = courses[j];
+              break;
+            }
+          }
+          var tidx = parseInt(topicSel.value, 10);
+          if (!course || !course.topics || !course.topics[tidx]) return;
+          var topic = course.topics[tidx];
+          processAndSaveDoc(topic.title, topic.content);
+          if (statusEl) statusEl.textContent = "Loaded \u201c" + topic.title + "\u201d into your library.";
+        });
+        if (statusEl) statusEl.textContent = "Choose a topic, then click Add topic to library.";
+      })
+      .catch(function () {
+        if (statusEl) {
+          statusEl.textContent =
+            "Starter topics need a web server (GitHub Pages or python -m http.server). file:// cannot load the topic list.";
+        }
+      });
+  }
+
   function replaceDocNotes(docId, title, content) {
     var doc = getDoc(docId);
     if (!doc) return;
@@ -2147,6 +2224,8 @@
         }
       });
     }
+
+    wireApStarterPickers();
   }
 
   function boot() {
