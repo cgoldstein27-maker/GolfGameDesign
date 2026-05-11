@@ -8,7 +8,6 @@
  */
 
 import { rankChunksForQuestion } from "./study-engine.js";
-import { fetchWikipediaContext } from "./web-research.js";
 import { fetchOpenAiChatCompletions } from "./openai-api.js";
 
 const STUDY_TUTOR_SYSTEM_PROMPT =
@@ -138,77 +137,6 @@ export async function generateNotesForTopic(topic, apiKey) {
   } catch (e) {
     console.warn("generateNotesForTopic network error", e);
     return `Network error while generating notes. Here is a generic outline for ${safeTopic}:\n\n- Definition and key idea\n- Why it matters\n- Main concepts and examples\n- Common mistakes\n- Summary bullets.`;
-  }
-}
-
-const RESEARCH_NOTES_SYSTEM =
-  "You write structured study notes for high school or early college. Use clear headings (# ## ###), definitions, worked examples where useful, common mistakes, and a short review checklist. When a Wikipedia extract is provided, ground factual claims in it; if unsure, write [verify]. If no extract was found, still write strong notes and mark shaky factual claims [verify]. End with 3–6 flashcard lines: Q: ... then A: ... (one pair per line block). No meta-commentary—start with the first heading.";
-
-/**
- * Build notes from a topic + free-form student prompt, optionally after fetching Wikipedia.
- * Requires OpenAI API key.
- */
-export async function generateResearchNotes({ topic, userPrompt, apiKey, useWeb = true }) {
-  if (!apiKey || !apiKey.startsWith("sk-")) {
-    return { ok: false, error: "Add an OpenAI API key under Ask notes or Research notes." };
-  }
-  const topicLine = (topic || "").trim() || "Study topic";
-  const instructions =
-    (userPrompt || "").trim() ||
-    "Write thorough, exam-ready notes with clear structure and at least one worked example.";
-
-  let referenceBlock = "";
-  let wikiUsed = false;
-  let wikiTimedOut = false;
-  let wikiTitle = "";
-  let wikiUrl = "";
-  if (useWeb) {
-    const wiki = await fetchWikipediaContext(topicLine);
-    wikiTimedOut = Boolean(wiki?.timedOut);
-    if (wiki?.extract) {
-      wikiUsed = true;
-      wikiTitle = wiki.title;
-      wikiUrl = wiki.url;
-      referenceBlock = `\n\n--- Wikipedia reference (“${wiki.title}”)\n${wiki.extract.slice(0, 14000)}\n---\n`;
-    }
-  }
-
-  const userContent =
-    `TOPIC / TITLE: ${topicLine}\n\nSTUDENT INSTRUCTIONS (follow closely):\n${instructions}\n` +
-    referenceBlock +
-    (wikiUsed
-      ? "\nIntegrate the reference with the instructions. Prefer the reference for concrete facts."
-      : useWeb
-        ? wikiTimedOut
-          ? "\nWikipedia was slow to respond, so no web reference is available. Write strong notes from general knowledge and mark uncertain specifics [verify]."
-          : "\nNo Wikipedia article matched this topic; write the best general study notes you can and mark uncertain specifics [verify]."
-        : "\nWikipedia lookup was turned off; write strong notes from general knowledge and mark uncertain facts [verify].");
-
-  try {
-    const res = await fetchOpenAiChatCompletions(
-      apiKey,
-      {
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: RESEARCH_NOTES_SYSTEM },
-          { role: "user", content: userContent },
-        ],
-        max_tokens: 3500,
-        temperature: 0.35,
-      },
-      120000
-    );
-
-    if (!res.ok) {
-      const err = await res.text();
-      return { ok: false, error: `API error (${res.status}): ${err.slice(0, 200)}` };
-    }
-    const data = await res.json();
-    const text = data.choices?.[0]?.message?.content?.trim();
-    if (!text) return { ok: false, error: "Empty response from API." };
-    return { ok: true, text, wikiUsed, wikiTimedOut, wikiTitle, wikiUrl };
-  } catch (e) {
-    return { ok: false, error: String(e.message || e) };
   }
 }
 

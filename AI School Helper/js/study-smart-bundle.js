@@ -619,103 +619,6 @@
       });
   }
 
-  var RESEARCH_NOTES_SYSTEM =
-    "You write structured study notes for high school or early college. Use clear headings (# ## ###), definitions, worked examples where useful, common mistakes, and a short review checklist. When a Wikipedia extract is provided, ground factual claims in it; if unsure, write [verify]. If no extract was found, still write strong notes and mark shaky factual claims [verify]. End with 3–6 flashcard lines: Q: ... then A: ... (one pair per line block). No meta-commentary—start with the first heading.";
-
-  function generateResearchNotes(opts) {
-    opts = opts || {};
-    var apiKey = opts.apiKey || "";
-    if (!apiKey || apiKey.indexOf("sk-") !== 0) {
-      var localTopic = (opts.topic || "Study topic").trim() || "Study topic";
-      var localPrompt = (opts.userPrompt || "").trim();
-      var localText =
-        "# " +
-        localTopic +
-        "\n\n## Overview\n- Main idea and why it matters.\n- How this topic connects to your class goals.\n\n## Key terms\n- Define the core vocabulary in your own words.\n\n## Core ideas\n- Break the topic into 3-5 important concepts.\n\n## Example / application\n- Walk through one concrete example step by step.\n\n## Common mistakes\n- List 2-3 misunderstandings and how to avoid them.\n\n## Review checklist\n- [ ] I can explain the main idea.\n- [ ] I can define key terms.\n- [ ] I can solve/answer a basic example.\n\n## Optional focus from your prompt\n" +
-        (localPrompt ? "- " + localPrompt.replace(/\n+/g, "\n- ") : "- Add any class-specific focus points here.") +
-        "\n\nQ: What is the main idea of " +
-        localTopic +
-        "?\nA: Summarize it in one or two sentences.\n\nQ: What is a common mistake in " +
-        localTopic +
-        "?\nA: Confusing definitions or steps; verify with an example.";
-      return Promise.resolve({ ok: true, text: localText, wikiUsed: false, wikiTimedOut: false, wikiTitle: "", wikiUrl: "" });
-    }
-    var topicLine = (opts.topic || "").trim() || "Study topic";
-    var instructions =
-      (opts.userPrompt || "").trim() ||
-      "Write thorough, exam-ready notes with clear structure and at least one worked example.";
-    var useWeb = opts.useWeb !== false;
-    var wikiPromise = useWeb ? fetchWikipediaContext(topicLine) : Promise.resolve(null);
-    return wikiPromise.then(function (wiki) {
-      var referenceBlock = "";
-      var wikiUsed = false;
-      var wikiTimedOut = false;
-      var wikiTitle = "";
-      var wikiUrl = "";
-      wikiTimedOut = !!(wiki && wiki.timedOut);
-      if (wiki && wiki.extract) {
-        wikiUsed = true;
-        wikiTitle = wiki.title;
-        wikiUrl = wiki.url;
-        referenceBlock =
-          "\n\n--- Wikipedia reference (\u201c" +
-          wiki.title +
-          "\u201d)\n" +
-          wiki.extract.slice(0, 14000) +
-          "\n---\n";
-      }
-      var tail = wikiUsed
-        ? "\nIntegrate the reference with the instructions. Prefer the reference for concrete facts."
-        : useWeb
-          ? wikiTimedOut
-            ? "\nWikipedia was slow to respond, so no web reference is available. Write strong notes from general knowledge and mark uncertain specifics [verify]."
-            : "\nNo Wikipedia article matched this topic; write the best general study notes you can and mark uncertain specifics [verify]."
-          : "\nWikipedia lookup was turned off; write strong notes from general knowledge and mark uncertain facts [verify].";
-      var userContent =
-        "TOPIC / TITLE: " +
-        topicLine +
-        "\n\nSTUDENT INSTRUCTIONS (follow closely):\n" +
-        instructions +
-        "\n" +
-        referenceBlock +
-        tail;
-      return openaiChatFetch(
-        apiKey,
-        {
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: RESEARCH_NOTES_SYSTEM },
-            { role: "user", content: userContent },
-          ],
-          max_tokens: 3500,
-          temperature: 0.35,
-        },
-        120000
-      ).then(function (res) {
-        if (!res.ok) {
-          return res.text().then(function (err) {
-            return { ok: false, error: "API error (" + res.status + "): " + err.slice(0, 200) };
-          });
-        }
-        return res.json().then(function (data) {
-          var text =
-            data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content
-              ? data.choices[0].message.content.trim()
-              : "";
-          if (!text) return { ok: false, error: "Empty response from API." };
-          return {
-            ok: true,
-            text: text,
-            wikiUsed: wikiUsed,
-            wikiTimedOut: wikiTimedOut,
-            wikiTitle: wikiTitle,
-            wikiUrl: wikiUrl,
-          };
-        });
-      });
-    });
-  }
-
   function parseJsonFromModelContent(raw) {
     var t = (raw || "").trim();
     if (t.indexOf("```") === 0) {
@@ -968,7 +871,7 @@
   const USER_INDEX_KEY = "study-smart-users-v1";
   const SESSION_KEY = "study-smart-session";
   const LAST_TAB_KEY = "study-smart-last-tab";
-  var VALID_TABS = { library: 1, create: 1, study: 1, quiz: 1, insights: 1, chat: 1 };
+  var VALID_TABS = { library: 1, study: 1, quiz: 1, insights: 1, chat: 1 };
   var mainAppInitialized = false;
   let state = defaultState();
   const $ = function (sel) {
@@ -1164,11 +1067,9 @@
     function norm(v) {
       return v == null || typeof v !== "string" ? "" : v.trim().replace(/\u00a0/g, "");
     }
-    var r = $("#research-openai-key");
     var c = $("#openai-key");
     var q = $("#quiz-openai-key");
     return (
-      norm(r && r.value) ||
       norm(c && c.value) ||
       norm(q && q.value) ||
       norm(localStorage.getItem(OPENAI_STORAGE)) ||
@@ -1178,7 +1079,7 @@
 
   function syncOpenAiKeyFields() {
     var v = localStorage.getItem(OPENAI_STORAGE) || "";
-    var keys = ["openai-key", "research-openai-key", "quiz-openai-key"];
+    var keys = ["openai-key", "quiz-openai-key"];
     for (var i = 0; i < keys.length; i++) {
       var el = document.getElementById(keys[i]);
       if (el && !el.value) el.value = v;
@@ -1190,9 +1091,9 @@
     var v = (el.value || "").trim();
     if (v) localStorage.setItem(OPENAI_STORAGE, v);
     else localStorage.removeItem(OPENAI_STORAGE);
-    var keys = ["openai-key", "research-openai-key", "quiz-openai-key"];
-    for (var i = 0; i < keys.length; i++) {
-      var other = document.getElementById(keys[i]);
+    var keys2 = ["openai-key", "quiz-openai-key"];
+    for (var j = 0; j < keys2.length; j++) {
+      var other = document.getElementById(keys2[j]);
       if (other && other !== el) other.value = v;
     }
   }
@@ -1608,28 +1509,6 @@
   let quizIdx = 0;
   let quizLocked = false;
 
-  function refreshCreateNotesTarget() {
-    var sel = $("#create-notes-target");
-    if (!sel) return;
-    var prev = sel.value;
-    sel.innerHTML = "";
-    var optNew = document.createElement("option");
-    optNew.value = "";
-    optNew.textContent = "\u2014 New note set \u2014";
-    sel.appendChild(optNew);
-    for (var ci = 0; ci < state.docs.length; ci++) {
-      var d = state.docs[ci];
-      var o = document.createElement("option");
-      o.value = d.id;
-      o.textContent = d.title + " (replace notes)";
-      sel.appendChild(o);
-    }
-    var ids = {};
-    for (var oi = 0; oi < sel.options.length; oi++) ids[sel.options[oi].value] = true;
-    if (prev && ids[prev]) sel.value = prev;
-    else if (state.activeDocId && ids[state.activeDocId]) sel.value = state.activeDocId;
-  }
-
   function refreshSelectors() {
     const qSel = $("#quiz-doc-select");
     const cSel = $("#chat-doc-select");
@@ -1653,7 +1532,6 @@
       }
       renderQuizEmpty();
     }
-    refreshCreateNotesTarget();
   }
 
   function renderQuizEmpty() {
@@ -1896,10 +1774,10 @@
             if (name === "study") startSrsSession();
             if (name === "quiz") refreshSelectors();
             if (name === "insights") renderWeakTopics();
-            if (name === "chat" || name === "create") {
+            if (name === "chat") {
               refreshSelectors();
-    syncOpenAiKeyFields();
-    syncOpenAiBaseField();
+              syncOpenAiKeyFields();
+              syncOpenAiBaseField();
             }
           };
         })(tabEls[i])
@@ -2018,12 +1896,6 @@
         persistOpenAiKeyFromField($("#quiz-openai-key"));
       });
     }
-    var researchKeyEl = $("#research-openai-key");
-    if (researchKeyEl) {
-      researchKeyEl.addEventListener("change", function () {
-        persistOpenAiKeyFromField($("#research-openai-key"));
-      });
-    }
     var apiBaseEl = $("#openai-api-base");
     if (apiBaseEl) {
       apiBaseEl.addEventListener("change", function () {
@@ -2069,73 +1941,6 @@
           .finally(function () {
             btnTestApi.disabled = false;
           });
-      });
-    }
-
-    var btnCreateGen = $("#btn-create-notes-gen");
-    if (btnCreateGen) {
-      btnCreateGen.addEventListener("click", function () {
-        var status = $("#create-notes-status");
-        var topic = ($("#create-notes-topic").value || "").trim();
-        var prompt = ($("#create-notes-prompt").value || "").trim();
-        var useWebEl = $("#create-notes-use-web");
-        var useWeb = !useWebEl || useWebEl.checked;
-        if (!topic && !prompt) {
-          status.textContent = "Enter a topic or instructions (or both).";
-          return;
-        }
-        var apiKey = readApiKey();
-        status.textContent = useWeb ? "Fetching Wikipedia reference\u2026" : "Calling OpenAI\u2026";
-        btnCreateGen.disabled = true;
-        generateResearchNotes({
-          topic: topic || prompt.slice(0, 120),
-          userPrompt: prompt || "Write study notes on: " + topic + ".",
-          apiKey: apiKey,
-          useWeb: useWeb,
-        }).then(function (result) {
-          if (!result.ok) {
-            status.textContent = result.error;
-            return;
-          }
-          $("#create-notes-preview").value = result.text;
-          status.textContent = result.wikiUsed
-            ? "Notes generated using Wikipedia (\u201c" +
-              result.wikiTitle +
-              "\u201d) + OpenAI. Edit if needed, then save."
-            : result.wikiTimedOut
-              ? "Wikipedia slow, continuing with notes-only. Notes generated from model knowledge; edit and save."
-              : "Notes generated (no Wikipedia match\u2014model used general knowledge). Edit if needed, then save.";
-        }).catch(function (err) {
-          status.textContent =
-            "Could not generate notes right now. Check your internet/API key and try again. (" +
-            String((err && err.message) || err || "unknown error") +
-            ")";
-        }).finally(function () {
-          btnCreateGen.disabled = false;
-        });
-      });
-    }
-
-    var btnCreateSave = $("#btn-create-notes-save");
-    if (btnCreateSave) {
-      btnCreateSave.addEventListener("click", function () {
-        var status = $("#create-notes-status");
-        var preview = ($("#create-notes-preview").value || "").trim();
-        if (!preview) {
-          status.textContent = "Generate notes first, or paste text into the preview.";
-          return;
-        }
-        var targetSel = $("#create-notes-target");
-        var targetId = targetSel ? targetSel.value : "";
-        var topic = ($("#create-notes-topic").value || "").trim() || "Research notes";
-        if (targetId) {
-          replaceDocNotes(targetId, topic, preview);
-          var saved = getDoc(targetId);
-          status.textContent = 'Updated \u201c' + (saved ? saved.title : "set") + '\u201d in your library.';
-        } else {
-          processAndSaveDoc(topic, preview);
-          status.textContent = 'Saved new set \u201c' + topic + '\u201d. Open Library to review.';
-        }
       });
     }
 
