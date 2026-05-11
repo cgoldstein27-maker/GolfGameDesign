@@ -331,6 +331,68 @@ function processAndSaveDoc(title, content) {
   renderWeakTopics();
 }
 
+/** Cached AP-style starter topics loaded from `js/ap-starter-topics.json`. */
+let apStarterDataCache = null;
+
+async function loadApStarterData() {
+  if (apStarterDataCache) return apStarterDataCache;
+  const res = await fetch("js/ap-starter-topics.json", { cache: "force-cache" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  apStarterDataCache = await res.json();
+  return apStarterDataCache;
+}
+
+/** Course/topic pickers: load bundled starter outlines (no upload). */
+function wireApStarterPickers() {
+  const courseSel = $("#ap-starter-course");
+  const topicSel = $("#ap-starter-topic");
+  const btn = $("#btn-ap-starter-load");
+  const statusEl = $("#ap-starter-status");
+  if (!courseSel || !topicSel || !btn) return;
+
+  loadApStarterData()
+    .then((data) => {
+      const courses = data.courses || [];
+      courseSel.innerHTML = "";
+      for (const c of courses) {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = c.name;
+        courseSel.appendChild(opt);
+      }
+      const refillTopics = () => {
+        const cid = courseSel.value;
+        const course = courses.find((x) => x.id === cid);
+        topicSel.innerHTML = "";
+        if (!course?.topics?.length) return;
+        course.topics.forEach((t, idx) => {
+          const o = document.createElement("option");
+          o.value = String(idx);
+          o.textContent = t.title;
+          topicSel.appendChild(o);
+        });
+      };
+      courseSel.addEventListener("change", refillTopics);
+      refillTopics();
+      btn.addEventListener("click", () => {
+        const cid = courseSel.value;
+        const course = courses.find((x) => x.id === cid);
+        const tidx = Number.parseInt(topicSel.value, 10);
+        if (!course?.topics?.[tidx]) return;
+        const topic = course.topics[tidx];
+        processAndSaveDoc(topic.title, topic.content);
+        if (statusEl) statusEl.textContent = `Loaded “${topic.title}” into your library.`;
+      });
+      if (statusEl) statusEl.textContent = "Choose a topic, then click Add topic to library.";
+    })
+    .catch(() => {
+      if (statusEl) {
+        statusEl.textContent =
+          "Starter topics need a web server (GitHub Pages or python -m http.server). file:// cannot load the topic list.";
+      }
+    });
+}
+
 /** Replace an existing set’s body and rebuild chunks, summary, flashcards, and SRS rows. */
 function replaceDocNotes(docId, title, content) {
   const doc = getDoc(docId);
@@ -996,6 +1058,8 @@ function bindUi() {
       appendChat("bot", String(e?.message || e), []);
     }
   });
+
+  wireApStarterPickers();
 }
 
 function initMainApp() {

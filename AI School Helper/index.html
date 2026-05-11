@@ -94,7 +94,26 @@
         <div class="grid-2">
           <div class="card">
             <h2>Add material</h2>
-            <p class="hint">Paste text or upload <code>.txt</code>. PDF uses your browser (text layers only). You can open this app by double‑clicking <code>index.html</code> as long as the <code>css</code> and <code>js</code> folders stay next to it.</p>
+            <h3 class="h3-muted">Start without uploading</h3>
+            <p class="hint">
+              Pick a course and topic to load a short <strong>starter outline</strong> into your library (summaries, flashcards, and quizzes build from it).
+              For full AP course and exam content, use the official
+              <a href="https://apstudents.collegeboard.org/courses" target="_blank" rel="noopener noreferrer">College Board AP Students</a> site—this app does not copy their materials.
+            </p>
+            <label class="field narrow">
+              <span>Course</span>
+              <select id="ap-starter-course" aria-label="AP-style course"></select>
+            </label>
+            <label class="field narrow">
+              <span>Topic</span>
+              <select id="ap-starter-topic" aria-label="Topic within course"></select>
+            </label>
+            <div class="row">
+              <button type="button" class="btn primary" id="btn-ap-starter-load">Add topic to library</button>
+            </div>
+            <p id="ap-starter-status" class="status" role="status"></p>
+            <hr class="field-sep" />
+            <p class="hint">Or paste your own text or upload <code>.txt</code>. PDF uses your browser (text layers only). You can open this app by double‑clicking <code>index.html</code> as long as the <code>css</code> and <code>js</code> folders stay next to it.</p>
             <label class="field">
               <span>Title</span>
               <input type="text" id="doc-title" placeholder="e.g. Biology — Cell division" />

@@ -1,0 +1,95 @@
+{
+  "about": "Short starter outlines for practice only. Official AP course and exam descriptions are published by the College Board at apstudents.collegeboard.org.",
+  "courses": [
+    {
+      "id": "apush",
+      "name": "AP U.S. History (themes)",
+      "topics": [
+        {
+          "title": "APUSH — Period 1 (1491–1607)",
+          "content": "Native North American societies before sustained European contact.\n\nKey ideas: diverse cultures, trade networks, agriculture, and political structures adapted to geography. European exploration begins to redraw maps and trade routes.\n\nStudy focus: compare regions (e.g., Southwest vs. Northeast). Know one example of long-distance exchange before Columbus.\n\nCommon mistakes: treating all Indigenous nations as one culture; forgetting environmental context.\n\nExam tip: tie evidence to historical thinking skills—causation, continuity, and change over time."
+        },
+        {
+          "title": "APUSH — Period 3 (1754–1800)",
+          "content": "Imperial conflict, independence, and building new governments.\n\nKey ideas: French and Indian War aftermath, taxes and protest, Declaration and war, Articles vs. Constitution, first party debates.\n\nStudy focus: explain how debates over sovereignty and rights shaped founding documents.\n\nCommon mistakes: conflating colonial grievances with later Civil War issues.\n\nExam tip: practice thesis statements that use specific evidence from two different colonies or regions."
+        },
+        {
+          "title": "APUSH — Period 4 (1800–1848)",
+          "content": "Expansion, market revolution, and reform.\n\nKey ideas: territorial growth, transportation, labor systems, sectional tensions, abolition and women’s rights movements.\n\nStudy focus: connect economic change to social and political consequences.\n\nCommon mistakes: oversimplifying “North vs. South” before 1850.\n\nExam tip: use one reform movement as a case study for continuity vs. change."
+        },
+        {
+          "title": "APUSH — Period 7 (1890–1945)",
+          "content": "Industrial America, empire, Progressivism, world wars, and New Deal.\n\nKey ideas: immigration, labor unions, Populism/Progressivism, WWI home front, Great Depression responses, WWII mobilization.\n\nStudy focus: compare Progressive goals with outcomes; link foreign policy shifts to domestic debates.\n\nCommon mistakes: listing programs without explaining purpose or constraint.\n\nExam tip: LEQ practice—evaluate continuity in federal power across two eras."
+        }
+      ]
+    },
+    {
+      "id": "apworld",
+      "name": "AP World History: Modern",
+      "topics": [
+        {
+          "title": "AP World — Renaissance & global encounters",
+          "content": "Intellectual and artistic renewal in Europe alongside expanding maritime exploration.\n\nKey ideas: humanism, printing, patronage; Iberian navigation; early Atlantic exchanges.\n\nStudy focus: connect cultural change to economic and political elites.\n\nCommon mistakes: treating Renaissance as purely “rebirth of Greece/Rome” with no social context.\n\nExam tip: compare one European development with a contemporaneous Asian state-building example."
+        },
+        {
+          "title": "AP World — Industrialization & imperialism",
+          "content": "Steam power, factories, and global competition reshape labor, trade, and empire.\n\nKey ideas: demographic shifts, reform responses, technologies of rule, resistance.\n\nStudy focus: link industrial demand to colonial extraction and infrastructure.\n\nCommon mistakes: assuming imperialism was only “European vs. everyone else.”\n\nExam tip: causation chain—one resource, one technology, one political outcome."
+        },
+        {
+          "title": "AP World — 1914–present (war, peace, globalization)",
+          "content": "World wars, decolonization, Cold War, and institutions of global interdependence.\n\nKey ideas: self-determination, superpower rivalry, international organizations, migration, human rights language.\n\nStudy focus: compare post-1945 economic orders in two regions.\n\nCommon mistakes: Cold War as only nuclear crisis—include economics and proxy conflicts.\n\nExam tip: document-based reasoning—group sources by perspective before thesis."
+        }
+      ]
+    },
+    {
+      "id": "apgov",
+      "name": "AP U.S. Government & Politics",
+      "topics": [
+        {
+          "title": "AP Gov — Constitutional principles",
+          "content": "Founding debates, separation of powers, checks and balances, federalism.\n\nKey ideas: enumerated vs. reserved powers; elastic clause debates; Bill of Rights as limits on national power.\n\nStudy focus: apply a scenario: which branch checks which, and why?\n\nCommon mistakes: mixing up Articles of Confederation problems with later federalism disputes.\n\nExam tip: define terms precisely (e.g., devolution, mandate, commerce power)."
+        },
+        {
+          "title": "AP Gov — Civil liberties & civil rights",
+          "content": "Bill of Rights incorporation, selective incorporation, equal protection, landmark cases.\n\nKey ideas: speech/religion/assembly limits; due process; disparate impact vs. intent.\n\nStudy focus: compare two amendments used in similar fact patterns.\n\nCommon mistakes: using “civil liberties” and “civil rights” interchangeably.\n\nExam tip: SCOTUS reasoning—majority concern vs. dissent concern in one case."
+        },
+        {
+          "title": "AP Gov — Elections, parties, & media",
+          "content": "Linkage institutions, nomination processes, campaign finance, polarization, news consumption.\n\nKey ideas: primaries vs. caucuses; PACs/Super PACs; agenda setting and framing.\n\nStudy focus: explain how a rule change shifts who wins nominations.\n\nCommon mistakes: claiming parties are identical; ignoring state-level variation.\n\nExam tip: free-response—use a real mechanism (e.g., electoral college) not vague “people vote.”"
+        }
+      ]
+    },
+    {
+      "id": "apbio",
+      "name": "AP Biology",
+      "topics": [
+        {
+          "title": "AP Bio — Chemistry of life & cells",
+          "content": "Water properties, carbon chemistry, macromolecules, enzyme basics, membrane structure and transport.\n\nKey ideas: structure–function; competitive vs. noncompetitive inhibition; passive vs. active transport.\n\nStudy focus: explain how surface area/volume ratio matters for cell size.\n\nCommon mistakes: confusing hypertonic/hypotonic direction of water movement.\n\nExam tip: draw quick sketches for osmosis in animal vs. plant cells."
+        },
+        {
+          "title": "AP Bio — Cell energetics",
+          "content": "Photosynthesis and cellular respiration as coupled pathways of energy flow.\n\nKey ideas: ATP, redox, glycolysis, Krebs, ETC; light reactions vs. Calvin cycle.\n\nStudy focus: track carbons and electron carriers at a big-picture level.\n\nCommon mistakes: saying “plants only do photosynthesis” without noting they respire too.\n\nExam tip: compare aerobic vs. anaerobic outcomes in muscle vs. yeast contexts."
+        },
+        {
+          "title": "AP Bio — Heredity & gene expression",
+          "content": "Mendelian patterns, extensions, linkage, DNA replication, transcription, translation, regulation.\n\nKey ideas: probability with Punnett squares; central dogma; operons as simple regulation models.\n\nStudy focus: predict phenotypes with incomplete dominance or codominance.\n\nCommon mistakes: mixing replication enzymes with transcription enzymes.\n\nExam tip: Chi-square vocabulary—null hypothesis, degrees of freedom, “fail to reject.”"
+        }
+      ]
+    },
+    {
+      "id": "apecon",
+      "name": "AP Microeconomics (basics)",
+      "topics": [
+        {
+          "title": "AP Micro — Supply, demand, & elasticity",
+          "content": "Law of demand, law of supply, equilibrium, consumer/producer surplus, price controls.\n\nKey ideas: determinants of demand vs. quantity demanded; elasticity along a curve vs. shifts.\n\nStudy focus: show deadweight loss from a binding price ceiling.\n\nCommon mistakes: drawing supply/demand shifts without explaining which curve moves and why.\n\nExam tip: label axes and equilibrium clearly before writing paragraphs."
+        },
+        {
+          "title": "AP Micro — Market structures",
+          "content": "Perfect competition, monopoly, monopolistic competition, oligopoly.\n\nKey ideas: MR=MC rule; barriers to entry; game theory intuition for oligopoly.\n\nStudy focus: compare long-run profits across structures.\n\nCommon mistakes: calling any firm with branding a monopoly.\n\nExam tip: use a table—# firms, product type, entry, long-run profit."
+        }
+      ]
+    }
+  ]
+}
