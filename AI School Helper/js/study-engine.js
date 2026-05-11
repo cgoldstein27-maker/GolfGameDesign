@@ -40,6 +40,29 @@ function firstLineLabel(chunk) {
   return short || "General";
 }
 
+/** Body of chunk after the first line (drops title / heading so Q ≠ A). */
+function bodyAfterFirstLine(chunk) {
+  const nl = chunk.indexOf("\n");
+  if (nl === -1) return "";
+  return chunk.slice(nl + 1).trim();
+}
+
+/** Remove leading text from answer when it repeats the topic or first sentence. */
+function stripLeadingDuplicate(label, sentenceStart, answer) {
+  let a = (answer || "").trim();
+  for (const prefix of [label, sentenceStart]) {
+    const p = (prefix || "").replace(/…$/, "").trim();
+    if (p.length < 6) continue;
+    const pl = p.toLowerCase();
+    const al = a.toLowerCase();
+    if (al.startsWith(pl)) {
+      a = a.slice(p.length).trim();
+      if (a.startsWith(":") || a.startsWith("—") || a.startsWith("-")) a = a.slice(1).trim();
+    }
+  }
+  return a;
+}
+
 /** Stable key for weak-topic tracking (same topic → same bucket). */
 function topicKey(label) {
   return label.toLowerCase().replace(/\s+/g, " ").slice(0, 80);
@@ -98,12 +121,39 @@ export function buildStudyMaterial(content, idPrefix) {
     if (sentences.length === 0) continue;
     const head = sentences[0];
     const rest = sentences.slice(1).join(" ");
-    const back = rest.length > 20 ? `${head} ${rest}` : c.text;
+    const firstLineFull = c.text.split("\n")[0].trim();
+    const afterLine = bodyAfterFirstLine(c.text);
+    // Answer = supporting detail only, not the same line as the “topic” prompt.
+    let back =
+      rest.length > 12
+        ? rest
+        : afterLine.length > 12
+          ? afterLine
+          : sentences.length >= 2
+            ? sentences.slice(1).join(" ")
+            : summarize(c.text, 3);
+    back = stripLeadingDuplicate(firstLineFull, head, back);
+    if (back.length < 15) {
+      back = summarize(c.text, 4).slice(0, 1200);
+      back = stripLeadingDuplicate(firstLineFull, head, back);
+    }
+    if (back.length < 12) back = c.text.trim().slice(0, 1200);
+    back = stripLeadingDuplicate(firstLineFull, head, back);
+    if (back.length < 12 && head.length > 36) {
+      const cut = Math.floor(head.length * 0.5);
+      back = head.slice(cut).trim();
+    }
+
+    const qStem =
+      rest.length > 12 || afterLine.length > 12
+        ? `What does your text say about “${c.topic}”?`
+        : `What is the main idea for “${c.topic}”?`;
+
     flashcards.push({
       id: `${idPrefix}-fc-${n++}`,
       topic: c.topic,
       topicKey: c.topicKey,
-      q: `Explain or recall: ${c.topic}`,
+      q: qStem,
       a: back.slice(0, 1200),
     });
     if (sentences.length >= 2) {
