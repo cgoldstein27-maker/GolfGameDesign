@@ -96,6 +96,32 @@
     return a;
   }
 
+  function detailAwayFromOpening(fullChunk, opening, candidate) {
+    var a = (candidate || "").trim();
+    var op = (opening || "").replace(/…$/g, "").trim();
+    if (op.length < 10 || a.length < 10) return a;
+    var n = Math.min(28, op.length, a.length);
+    if (a.slice(0, n).toLowerCase() !== op.slice(0, n).toLowerCase()) return a;
+    var semi = fullChunk.indexOf(";");
+    if (semi !== -1) {
+      var tail = fullChunk.slice(semi + 1).trim();
+      if (tail.length > 12) return tail.slice(0, 1200);
+    }
+    var from = Math.floor(fullChunk.length * 0.35);
+    var tail2 = fullChunk.slice(from).trim();
+    if (tail2.length > 12) return tail2.slice(0, 1200);
+    return a.slice(Math.min(op.length, a.length)).trim().slice(0, 1200) || a;
+  }
+
+  function answersTooSimilar(a, b) {
+    var al = (a || "").toLowerCase().trim();
+    var bl = (b || "").toLowerCase().trim();
+    if (al.length < 12 || bl.length < 12) return false;
+    if (al === bl) return true;
+    if (al.indexOf(bl) !== -1 || bl.indexOf(al) !== -1) return Math.min(al.length, bl.length) >= 18;
+    return false;
+  }
+
   function topicKey(label) {
     return label.toLowerCase().replace(/\s+/g, " ").slice(0, 80);
   }
@@ -174,8 +200,18 @@
       if (back.length < 12 && head.length > 36) {
         back = head.slice(Math.floor(head.length * 0.5)).trim();
       }
-      var qStem =
-        rest.length > 12 || afterLine.length > 12
+      back = detailAwayFromOpening(c.text, firstLineFull, back);
+      back = stripLeadingDuplicate(firstLineFull, head, back);
+      if (back.length < 12) {
+        back = detailAwayFromOpening(c.text, firstLineFull, summarize(c.text, 4)).slice(0, 1200);
+      }
+      var longHeading =
+        firstLineFull.length > 44 || c.topic.slice(-1) === "…" || c.topic.slice(-3) === "...";
+      var qStem = longHeading
+        ? rest.length > 12 || afterLine.length > 12
+          ? "Which detail is spelled out in this part of your notes?"
+          : "Which statement best matches what this part of your notes is about?"
+        : rest.length > 12 || afterLine.length > 12
           ? 'What does your text say about "' + c.topic + '"?'
           : 'What is the main idea for "' + c.topic + '"?';
       flashcards.push({
@@ -245,8 +281,46 @@
         if (distractors.length >= 3) break;
         if (f !== correct && distractors.indexOf(f) === -1) distractors.push(f);
       }
-      const options = [{ text: correct, correct: true }].concat(
-        distractors.map(function (t) {
+      var filtered = distractors.filter(function (d) {
+        return !answersTooSimilar(correct, d);
+      });
+      var fillTries = 0;
+      while (filtered.length < 3 && answers.length > 1 && fillTries++ < 40) {
+        var extra = answers[Math.floor(Math.random() * answers.length)];
+        if (
+          extra !== correct &&
+          filtered.indexOf(extra) === -1 &&
+          !answersTooSimilar(correct, extra)
+        ) {
+          filtered.push(extra);
+        }
+      }
+      while (filtered.length < 3) {
+        var fb = null;
+        for (let fi = 0; fi < FALLBACK_DISTRACTORS.length; fi++) {
+          var cand = FALLBACK_DISTRACTORS[fi];
+          if (cand !== correct && filtered.indexOf(cand) === -1) {
+            fb = cand;
+            break;
+          }
+        }
+        if (!fb) break;
+        filtered.push(fb);
+      }
+      var question = cards[i].q;
+      var cor = (correct || "").trim();
+      if (cor.length >= 24) {
+        var ql = question.toLowerCase();
+        for (var len = Math.min(80, cor.length); len >= 22; len -= 6) {
+          var frag = cor.slice(0, len).trim().toLowerCase();
+          if (frag.length >= 20 && ql.indexOf(frag) !== -1) {
+            question = "Which option matches what your notes say for this card?";
+            break;
+          }
+        }
+      }
+      var options = [{ text: correct, correct: true }].concat(
+        filtered.slice(0, 3).map(function (t) {
           return { text: t, correct: false };
         })
       );
@@ -254,7 +328,7 @@
         return Math.random() - 0.5;
       });
       quiz.push({
-        question: cards[i].q,
+        question: question,
         options: options,
         topicKey: cards[i].topicKey,
       });

@@ -63,6 +63,38 @@ function stripLeadingDuplicate(label, sentenceStart, answer) {
   return a;
 }
 
+/**
+ * When the draft answer still opens like the chunk heading (common for one-line
+ * “Key ideas: a; b; c” notes), use text after the first semicolon or the tail
+ * of the chunk so the back of the card is not the same string as the title.
+ */
+function detailAwayFromOpening(fullChunk, opening, candidate) {
+  let a = (candidate || "").trim();
+  const op = (opening || "").replace(/…$/g, "").trim();
+  if (op.length < 10 || a.length < 10) return a;
+  const n = Math.min(28, op.length, a.length);
+  if (a.slice(0, n).toLowerCase() !== op.slice(0, n).toLowerCase()) return a;
+  const semi = fullChunk.indexOf(";");
+  if (semi !== -1) {
+    const tail = fullChunk.slice(semi + 1).trim();
+    if (tail.length > 12) return tail.slice(0, 1200);
+  }
+  const from = Math.floor(fullChunk.length * 0.35);
+  const tail2 = fullChunk.slice(from).trim();
+  if (tail2.length > 12) return tail2.slice(0, 1200);
+  return a.slice(Math.min(op.length, a.length)).trim().slice(0, 1200) || a;
+}
+
+/** True if two strings are substring variants (bad MC distractors). */
+function answersTooSimilar(a, b) {
+  const al = (a || "").toLowerCase().trim();
+  const bl = (b || "").toLowerCase().trim();
+  if (al.length < 12 || bl.length < 12) return false;
+  if (al === bl) return true;
+  if (al.includes(bl) || bl.includes(al)) return Math.min(al.length, bl.length) >= 18;
+  return false;
+}
+
 /** Stable key for weak-topic tracking (same topic → same bucket). */
 function topicKey(label) {
   return label.toLowerCase().replace(/\s+/g, " ").slice(0, 80);
@@ -143,9 +175,19 @@ export function buildStudyMaterial(content, idPrefix) {
       const cut = Math.floor(head.length * 0.5);
       back = head.slice(cut).trim();
     }
+    back = detailAwayFromOpening(c.text, firstLineFull, back);
+    back = stripLeadingDuplicate(firstLineFull, head, back);
+    if (back.length < 12) {
+      back = detailAwayFromOpening(c.text, firstLineFull, summarize(c.text, 4)).slice(0, 1200);
+    }
 
-    const qStem =
-      rest.length > 12 || afterLine.length > 12
+    const longHeading =
+      firstLineFull.length > 44 || c.topic.endsWith("…") || c.topic.endsWith("...");
+    const qStem = longHeading
+      ? rest.length > 12 || afterLine.length > 12
+        ? "Which detail is spelled out in this part of your notes?"
+        : "Which statement best matches what this part of your notes is about?"
+      : rest.length > 12 || afterLine.length > 12
         ? `What does your text say about “${c.topic}”?`
         : `What is the main idea for “${c.topic}”?`;
 
@@ -209,11 +251,40 @@ export function buildQuiz(cards) {
       if (distractors.length >= 3) break;
       if (f !== correct && !distractors.includes(f)) distractors.push(f);
     }
-    const options = [{ text: correct, correct: true }, ...distractors.map((t) => ({ text: t, correct: false }))].sort(
+    const filtered = distractors.filter((d) => !answersTooSimilar(correct, d));
+    let fillTries = 0;
+    while (filtered.length < 3 && answers.length > 1 && fillTries++ < 40) {
+      const extra = answers[Math.floor(Math.random() * answers.length)];
+      if (
+        extra !== correct &&
+        !filtered.includes(extra) &&
+        !answersTooSimilar(correct, extra)
+      ) {
+        filtered.push(extra);
+      }
+    }
+    while (filtered.length < 3) {
+      const f = FALLBACK_DISTRACTORS.find((x) => x !== correct && !filtered.includes(x));
+      if (!f) break;
+      filtered.push(f);
+    }
+    let question = cards[i].q;
+    const cor = (correct || "").trim();
+    if (cor.length >= 24) {
+      const ql = question.toLowerCase();
+      for (let len = Math.min(80, cor.length); len >= 22; len -= 6) {
+        const frag = cor.slice(0, len).trim().toLowerCase();
+        if (frag.length >= 20 && ql.includes(frag)) {
+          question = "Which option matches what your notes say for this card?";
+          break;
+        }
+      }
+    }
+    const options = [{ text: correct, correct: true }, ...filtered.slice(0, 3).map((t) => ({ text: t, correct: false }))].sort(
       () => Math.random() - 0.5
     );
     quiz.push({
-      question: cards[i].q,
+      question,
       options,
       topicKey: cards[i].topicKey,
     });
