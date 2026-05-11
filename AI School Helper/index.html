@@ -59,7 +59,6 @@
       </div>
       <nav class="tabs" role="tablist" aria-label="Main">
         <button type="button" class="tab active" data-tab="library" role="tab" aria-selected="true">Library</button>
-        <button type="button" class="tab" data-tab="create" role="tab">Research notes</button>
         <button type="button" class="tab" data-tab="study" role="tab">Study (SRS)</button>
         <button type="button" class="tab" data-tab="quiz" role="tab">Quiz</button>
         <button type="button" class="tab" data-tab="insights" role="tab">Weak topics</button>
@@ -156,47 +155,6 @@
               <h3>Flashcards preview</h3>
               <ul id="active-cards-preview" class="cards-preview"></ul>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- AI topic notes: Wikipedia + OpenAI -->
-      <section id="panel-create" class="panel" role="tabpanel" hidden>
-        <div class="grid-2">
-          <div class="card">
-            <h2>Research notes</h2>
-            <p class="hint">
-              Pick a topic and tell the AI how you want the notes shaped. The app pulls a matching
-              <strong>Wikipedia</strong> article when possible, then <strong>OpenAI</strong> writes study notes.
-              Use the API settings section above to set your key once.
-            </p>
-            <label class="field narrow">
-              <span>Save into</span>
-              <select id="create-notes-target"></select>
-            </label>
-            <label class="field">
-              <span>Topic or title</span>
-              <input type="text" id="create-notes-topic" placeholder="e.g. RNA transcription" />
-            </label>
-            <label class="field">
-              <span>Instructions for the AI</span>
-              <textarea id="create-notes-prompt" rows="6" placeholder="e.g. AP Biology depth, include common exam traps, add a comparison table, emphasize diagrams in words…"></textarea>
-            </label>
-            <label class="field field-row">
-              <input type="checkbox" id="create-notes-use-web" checked />
-              <span>Include Wikipedia reference (recommended; needs network)</span>
-            </label>
-            <button type="button" class="btn primary" id="btn-create-notes-gen">Generate notes</button>
-            <p id="create-notes-status" class="status" role="status"></p>
-          </div>
-          <div class="card">
-            <h2>Preview &amp; save</h2>
-            <p class="hint">Edit the text, then save as a new library set or replace an existing one’s notes (flashcards and SRS reset for that set).</p>
-            <label class="field">
-              <span>Generated notes</span>
-              <textarea id="create-notes-preview" class="mono-ta" rows="22" placeholder="Generated notes appear here…"></textarea>
-            </label>
-            <button type="button" class="btn primary" id="btn-create-notes-save">Save to library</button>
           </div>
         </div>
       </section>

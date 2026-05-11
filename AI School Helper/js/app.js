@@ -14,7 +14,6 @@ import { recordWeak, weakTopicList } from "./weak-topics.js";
 import {
   answerQuestion,
   generateNotesForTopic,
-  generateResearchNotes,
   refineNotesWithAI,
   generateConceptualQuiz,
   generateAdvancedQuiz,
@@ -30,7 +29,7 @@ const USER_INDEX_KEY = "study-smart-users-v1";
 const SESSION_KEY = "study-smart-session";
 /** Last main tab so we can reopen where the user left off. */
 const LAST_TAB_KEY = "study-smart-last-tab";
-const VALID_TABS = new Set(["library", "create", "study", "quiz", "insights", "chat"]);
+const VALID_TABS = new Set(["library", "study", "quiz", "insights", "chat"]);
 
 let mainAppInitialized = false;
 
@@ -44,7 +43,6 @@ const $ = (sel) => document.querySelector(sel);
 function readApiKey() {
   const norm = (v) => (v == null || typeof v !== "string" ? "" : v.trim().replace(/\u00a0/g, ""));
   return (
-    norm($("#research-openai-key")?.value) ||
     norm($("#openai-key")?.value) ||
     norm($("#quiz-openai-key")?.value) ||
     norm(localStorage.getItem(OPENAI_STORAGE)) ||
@@ -54,7 +52,7 @@ function readApiKey() {
 
 function syncOpenAiKeyFields() {
   const v = localStorage.getItem(OPENAI_STORAGE) || "";
-  for (const id of ["openai-key", "research-openai-key", "quiz-openai-key"]) {
+  for (const id of ["openai-key", "quiz-openai-key"]) {
     const el = document.getElementById(id);
     if (el && !el.value) el.value = v;
   }
@@ -65,7 +63,7 @@ function persistOpenAiKeyFromField(el) {
   const v = el.value.trim();
   if (v) localStorage.setItem(OPENAI_STORAGE, v);
   else localStorage.removeItem(OPENAI_STORAGE);
-  for (const id of ["openai-key", "research-openai-key", "quiz-openai-key"]) {
+  for (const id of ["openai-key", "quiz-openai-key"]) {
     const node = document.getElementById(id);
     if (node && node !== el) node.value = v;
   }
@@ -531,7 +529,7 @@ let quizItems = [];
 let quizIdx = 0;
 let quizLocked = false;
 
-/** Fill quiz + chat + research-notes dropdowns from `state.docs`. */
+/** Fill quiz + chat dropdowns from `state.docs`. */
 function refreshSelectors() {
   const qSel = $("#quiz-doc-select");
   const cSel = $("#chat-doc-select");
@@ -554,28 +552,6 @@ function refreshSelectors() {
     }
     renderQuizEmpty();
   }
-  refreshCreateNotesTarget();
-}
-
-/** “Research notes” tab: new set vs replace an existing one. */
-function refreshCreateNotesTarget() {
-  const sel = $("#create-notes-target");
-  if (!sel) return;
-  const prev = sel.value;
-  sel.innerHTML = "";
-  const optNew = document.createElement("option");
-  optNew.value = "";
-  optNew.textContent = "— New note set —";
-  sel.appendChild(optNew);
-  for (const d of state.docs) {
-    const o = document.createElement("option");
-    o.value = d.id;
-    o.textContent = `${d.title} (replace notes)`;
-    sel.appendChild(o);
-  }
-  const ids = new Set([...sel.options].map((o) => o.value));
-  if (prev && ids.has(prev)) sel.value = prev;
-  else if (state.activeDocId && ids.has(state.activeDocId)) sel.value = state.activeDocId;
 }
 
 function renderQuizEmpty() {
@@ -663,7 +639,7 @@ async function startAdvancedQuiz() {
   }
   const apiKey = readApiKey();
   if (!apiKey.startsWith("sk-")) {
-    fb.textContent = "Advanced quiz requires an OpenAI API key. Add it under Ask notes or Research notes.";
+    fb.textContent = "Advanced quiz requires an OpenAI API key. Add it in API settings.";
     fb.hidden = false;
     return;
   }
@@ -801,7 +777,7 @@ function bindUi() {
       if (name === "study") startSrsSession();
       if (name === "quiz") refreshSelectors();
       if (name === "insights") renderWeakTopics();
-      if (name === "chat" || name === "create") {
+      if (name === "chat") {
         refreshSelectors();
         syncOpenAiKeyFields();
       }
@@ -908,9 +884,6 @@ function bindUi() {
   $("#quiz-next").addEventListener("click", quizNext);
 
   $("#openai-key")?.addEventListener("change", () => persistOpenAiKeyFromField($("#openai-key")));
-  $("#research-openai-key")?.addEventListener("change", () =>
-    persistOpenAiKeyFromField($("#research-openai-key"))
-  );
   $("#quiz-openai-key")?.addEventListener("change", () => persistOpenAiKeyFromField($("#quiz-openai-key")));
   $("#openai-api-base")?.addEventListener("change", persistOpenAiBaseFromField);
   $("#btn-test-api")?.addEventListener("click", async () => {
@@ -946,63 +919,6 @@ function bindUi() {
       )}`;
     } finally {
       if (btn) btn.disabled = false;
-    }
-  });
-
-  $("#btn-create-notes-gen")?.addEventListener("click", async () => {
-    const status = $("#create-notes-status");
-    const btn = $("#btn-create-notes-gen");
-    const topic = $("#create-notes-topic").value.trim();
-    const prompt = $("#create-notes-prompt").value.trim();
-    const useWeb = $("#create-notes-use-web")?.checked !== false;
-    if (!topic && !prompt) {
-      status.textContent = "Enter a topic or instructions (or both).";
-      return;
-    }
-    const apiKey = readApiKey();
-    status.textContent = useWeb ? "Fetching Wikipedia reference…" : "Calling OpenAI…";
-    if (btn) btn.disabled = true;
-    try {
-      const result = await generateResearchNotes({
-        topic: topic || prompt.slice(0, 120),
-        userPrompt: prompt || `Write study notes on: ${topic}.`,
-        apiKey,
-        useWeb,
-      });
-      if (!result.ok) {
-        status.textContent = result.error;
-        return;
-      }
-      $("#create-notes-preview").value = result.text;
-      status.textContent = result.wikiUsed
-        ? `Notes generated using Wikipedia (“${result.wikiTitle}”) + OpenAI. Edit if needed, then save.`
-        : result.wikiTimedOut
-          ? "Wikipedia slow, continuing with notes-only. Notes generated from model knowledge; edit and save."
-          : "Notes generated (no Wikipedia match—model used general knowledge). Edit if needed, then save.";
-    } catch (err) {
-      status.textContent = `Could not generate notes right now. Check your internet/API key and try again. (${String(
-        err?.message || err || "unknown error"
-      )})`;
-    } finally {
-      if (btn) btn.disabled = false;
-    }
-  });
-
-  $("#btn-create-notes-save")?.addEventListener("click", () => {
-    const status = $("#create-notes-status");
-    const preview = $("#create-notes-preview").value.trim();
-    if (!preview) {
-      status.textContent = "Generate notes first, or paste text into the preview.";
-      return;
-    }
-    const targetId = $("#create-notes-target")?.value || "";
-    const topic = $("#create-notes-topic").value.trim() || "Research notes";
-    if (targetId) {
-      replaceDocNotes(targetId, topic, preview);
-      status.textContent = `Updated “${getDoc(targetId)?.title || "set"}” in your library.`;
-    } else {
-      processAndSaveDoc(topic, preview);
-      status.textContent = `Saved new set “${topic}”. Open Library to review.`;
     }
   });
 
