@@ -88,6 +88,106 @@
         {
           "title": "AP Micro — Market structures",
           "content": "Perfect competition, monopoly, monopolistic competition, oligopoly.\n\nKey ideas: MR=MC rule; barriers to entry; game theory intuition for oligopoly.\n\nStudy focus: compare long-run profits across structures.\n\nCommon mistakes: calling any firm with branding a monopoly.\n\nExam tip: use a table—# firms, product type, entry, long-run profit."
+        },
+        {
+          "title": "AP Micro — Externalities & public goods",
+          "content": "When private markets miss social costs or benefits, policy tools try to realign incentives.\n\nKey ideas: negative vs. positive externalities; MSC/MPC curves; Pigouvian taxes/subsidies; non-rivalry and non-excludability.\n\nStudy focus: show deadweight loss from overproduction of a good with a negative externality.\n\nCommon mistakes: confusing external costs with “bad taste” or low demand.\n\nExam tip: label private vs. social curves and the efficient quantity on one diagram."
+        }
+      ]
+    },
+    {
+      "id": "aphug",
+      "name": "AP Human Geography",
+      "topics": [
+        {
+          "title": "APHG — Thinking geographically",
+          "content": "Maps, scales, projections, diffusion, and how geographers ask “why there?”\n\nKey ideas: absolute vs. relative location; formal/functional/perceptual regions; distance-decay and time-space compression.\n\nStudy focus: compare two types of map distortion for the same world region.\n\nCommon mistakes: treating GPS dots as the same thing as cultural regions.\n\nExam tip: use one real-world example of relocation diffusion vs. expansion diffusion."
+        },
+        {
+          "title": "APHG — Population & migration",
+          "content": "Demographic transition, push/pull factors, refugee patterns, policies at borders.\n\nKey ideas: crude rates, dependency ratio, guest workers, brain drain/brain gain.\n\nStudy focus: explain one policy that raises or lowers labor inflows.\n\nCommon mistakes: assuming all migration is permanent or voluntary.\n\nExam tip: chain reasoning—economic change → incentive → migration stream."
+        },
+        {
+          "title": "APHG — Cities & urban land use",
+          "content": "Models of urban structure, bid rent, suburbanization, and challenges of rapid growth.\n\nKey ideas: CBD, sector vs. multiple nuclei; squatter settlements; gentrification debates.\n\nStudy focus: apply bid-rent logic to why retail vs. housing ring the core differently.\n\nCommon mistakes: forcing every real city to fit one classic ring model.\n\nExam tip: pair a model prediction with one counterexample from a named world city."
+        }
+      ]
+    },
+    {
+      "id": "appsych",
+      "name": "AP Psychology",
+      "topics": [
+        {
+          "title": "AP Psych — Research methods & ethics",
+          "content": "How psychologists design studies, measure variables, and protect participants.\n\nKey ideas: IV/DV, operational definitions, random assignment, confounds, informed consent/debriefing.\n\nStudy focus: decide whether a headline supports causation or only correlation.\n\nCommon mistakes: saying “prove” from a single survey.\n\nExam tip: name one threat to internal validity and how randomization reduces it."
+        },
+        {
+          "title": "AP Psych — Biological bases of behavior",
+          "content": "Neurons, neurotransmitters, brain regions, endocrine system, genetics.\n\nKey ideas: action potential basics; agonists vs. antagonists; plasticity after injury or practice.\n\nStudy focus: map one behavior to two levels of analysis (e.g., neural + cognitive).\n\nCommon mistakes: localizing complex traits to a single “spot” in the brain.\n\nExam tip: use split-brain or hemispheric examples only with correct task wording."
+        },
+        {
+          "title": "AP Psych — Learning & memory",
+          "content": "Classical and operant conditioning, observational learning, encoding/storage/retrieval.\n\nKey ideas: acquisition/extinction/spontaneous recovery; schedules of reinforcement; shallow vs. deep processing.\n\nStudy focus: label UCS/UCR/CS/CR in a novel scenario.\n\nCommon mistakes: mixing negative reinforcement with punishment.\n\nExam tip: define terms in your own words before applying them to a vignette."
+        }
+      ]
+    },
+    {
+      "id": "apprecalc",
+      "name": "AP Precalculus",
+      "topics": [
+        {
+          "title": "AP Precalc — Functions & transformations",
+          "content": "Parent functions, shifts, stretches, compositions, and inverse ideas.\n\nKey ideas: domain/range after transformations; even/odd symmetry; one-to-one tests for inverses.\n\nStudy focus: write the equation of a transformed graph from a description.\n\nCommon mistakes: horizontal shifts with opposite sign confusion.\n\nExam tip: check inverses by composition f(f⁻¹(x)) on paper for one simple case."
+        },
+        {
+          "title": "AP Precalc — Trigonometry & models",
+          "content": "Unit circle, radians, graphs of sine/cosine, identities at an introductory level, simple harmonic motion.\n\nKey ideas: period, amplitude, phase shift; solving triangles with law of sines/cosines.\n\nStudy focus: build a sinusoidal model from amplitude, midline, and period data.\n\nCommon mistakes: mixing degrees and radians in the same equation.\n\nExam tip: draw a quick unit-circle diagram before evaluating special angles."
+        },
+        {
+          "title": "AP Precalc — Sequences & exponential change",
+          "content": "Arithmetic vs. geometric sequences, partial sums, discrete vs. continuous growth models.\n\nKey ideas: common difference/ratio; explicit vs. recursive forms; linking exponentials to percent change.\n\nStudy focus: convert a word problem into a sequence or exponential model.\n\nCommon mistakes: using linear growth when the problem states repeated percent increases.\n\nExam tip: state whether a model is discrete (counts steps) or continuous (time flowing)."
+        }
+      ]
+    },
+    {
+      "id": "apchem",
+      "name": "AP Chemistry",
+      "topics": [
+        {
+          "title": "AP Chem — Atomic structure & periodicity",
+          "content": "Light and matter, quantization, electron configuration, periodic trends.\n\nKey ideas: ionization energy, atomic radius, electronegativity patterns; exceptions you can explain.\n\nStudy focus: compare two elements in the same period for size vs. IE.\n\nCommon mistakes: thinking higher IE always means “more reactive metals.”\n\nExam tip: tie trend direction to effective nuclear charge and shell shielding in one sentence."
+        },
+        {
+          "title": "AP Chem — Stoichiometry & solutions",
+          "content": "Moles, limiting reactants, titration logic, concentration units, dilutions.\n\nKey ideas: mole roadmaps; M₁V₁ = M₂V₂ for dilution; percent yield vs. theoretical yield.\n\nStudy focus: identify the limiting reactant without arithmetic errors.\n\nCommon mistakes: confusing molarity with molality in lab contexts.\n\nExam tip: carry units through every line to catch flipped ratios early."
+        }
+      ]
+    },
+    {
+      "id": "apstats",
+      "name": "AP Statistics",
+      "topics": [
+        {
+          "title": "AP Stats — Exploring one-variable data",
+          "content": "Distributions, center, spread, unusual values, and graphs that tell a truthful story.\n\nKey ideas: mean vs. median resistance; IQR and outliers; skew vs. symmetry.\n\nStudy focus: justify which measure of center matches a skewed salary distribution.\n\nCommon mistakes: calling any high value an “outlier” without a rule.\n\nExam tip: link graph shape to choice of summary statistics in one short paragraph."
+        },
+        {
+          "title": "AP Stats — Designing studies & inference basics",
+          "content": "Sampling methods, experiments vs. observational studies, randomization, and the logic of confidence intervals and tests (intro).\n\nKey ideas: bias sources; blocking; placebo controls; scope of inference to populations/causes.\n\nStudy focus: explain why random assignment supports causation claims.\n\nCommon mistakes: generalizing beyond the sampled population.\n\nExam tip: name the study type before you interpret any p-value or interval."
+        }
+      ]
+    },
+    {
+      "id": "apcalcab",
+      "name": "AP Calculus AB (intro topics)",
+      "topics": [
+        {
+          "title": "AP Calc AB — Limits & continuity",
+          "content": "Limit intuition, one-sided limits, continuity conditions, removable discontinuities.\n\nKey ideas: limit laws; sandwich theorem at a high level; continuity on an interval.\n\nStudy focus: decide continuity at a piecewise junction using left/right limits.\n\nCommon mistakes: substituting into expressions that are undefined at the point.\n\nExam tip: show limit work even when the answer “looks obvious” from a graph."
+        },
+        {
+          "title": "AP Calc AB — Derivatives as rates of change",
+          "content": "Derivative definition, basic rules, and interpreting f′ in context.\n\nKey ideas: power rule; product/quotient; units of a derivative; marginal cost/revenue intuition.\n\nStudy focus: compute a derivative and interpret the sign in a word problem.\n\nCommon mistakes: dropping inner factors in simple chain-rule cases.\n\nExam tip: when in doubt, write “units of derivative = units of output per unit of input.”"
         }
       ]
     }
