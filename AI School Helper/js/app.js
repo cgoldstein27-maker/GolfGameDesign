@@ -29,7 +29,7 @@ const USER_INDEX_KEY = "study-smart-users-v1";
 const SESSION_KEY = "study-smart-session";
 /** Last main tab so we can reopen where the user left off. */
 const LAST_TAB_KEY = "study-smart-last-tab";
-const VALID_TABS = new Set(["library", "study", "quiz", "insights", "chat"]);
+const VALID_TABS = new Set(["library", "study", "quiz", "insights", "chat", "settings"]);
 
 let mainAppInitialized = false;
 
@@ -42,20 +42,13 @@ const $ = (sel) => document.querySelector(sel);
 
 function readApiKey() {
   const norm = (v) => (v == null || typeof v !== "string" ? "" : v.trim().replace(/\u00a0/g, ""));
-  return (
-    norm($("#openai-key")?.value) ||
-    norm($("#quiz-openai-key")?.value) ||
-    norm(localStorage.getItem(OPENAI_STORAGE)) ||
-    ""
-  );
+  return norm($("#openai-key")?.value) || norm(localStorage.getItem(OPENAI_STORAGE)) || "";
 }
 
 function syncOpenAiKeyFields() {
   const v = localStorage.getItem(OPENAI_STORAGE) || "";
-  for (const id of ["openai-key", "quiz-openai-key"]) {
-    const el = document.getElementById(id);
-    if (el && !el.value) el.value = v;
-  }
+  const el = document.getElementById("openai-key");
+  if (el && !el.value) el.value = v;
 }
 
 function persistOpenAiKeyFromField(el) {
@@ -63,10 +56,8 @@ function persistOpenAiKeyFromField(el) {
   const v = el.value.trim();
   if (v) localStorage.setItem(OPENAI_STORAGE, v);
   else localStorage.removeItem(OPENAI_STORAGE);
-  for (const id of ["openai-key", "quiz-openai-key"]) {
-    const node = document.getElementById(id);
-    if (node && node !== el) node.value = v;
-  }
+  const node = document.getElementById("openai-key");
+  if (node && node !== el) node.value = v;
 }
 
 function syncOpenAiBaseField() {
@@ -609,7 +600,7 @@ async function startQuiz() {
     fb.textContent =
       apiKey.startsWith("sk-") && hasEnoughText
         ? quizHint
-        : "Add an OpenAI API key for paraphrased questions, or save notes that include flashcards.";
+        : "Add an OpenAI key under the API tab for paraphrased questions, or save notes that include flashcards.";
     return;
   }
 
@@ -622,7 +613,7 @@ async function startQuiz() {
     /* already set from failed AI */
   } else if (!apiKey.startsWith("sk-") || !hasEnoughText) {
     quizHint =
-      "Quick mode: questions follow your flashcards. Add an API key for paraphrased questions from full notes.";
+      "Quick mode: questions follow your flashcards. Add a key under the API tab for paraphrased questions from full notes.";
   }
   renderQuizQuestion();
   if (quizHint) fb.textContent = quizHint;
@@ -639,7 +630,7 @@ async function startAdvancedQuiz() {
   }
   const apiKey = readApiKey();
   if (!apiKey.startsWith("sk-")) {
-    fb.textContent = "Advanced quiz requires an OpenAI API key. Add it in API settings.";
+    fb.textContent = "Advanced quiz requires an OpenAI API key. Add it under the API tab.";
     fb.hidden = false;
     return;
   }
@@ -781,6 +772,10 @@ function bindUi() {
         refreshSelectors();
         syncOpenAiKeyFields();
       }
+      if (name === "settings") {
+        syncOpenAiKeyFields();
+        syncOpenAiBaseField();
+      }
     });
   });
 
@@ -884,7 +879,6 @@ function bindUi() {
   $("#quiz-next").addEventListener("click", quizNext);
 
   $("#openai-key")?.addEventListener("change", () => persistOpenAiKeyFromField($("#openai-key")));
-  $("#quiz-openai-key")?.addEventListener("change", () => persistOpenAiKeyFromField($("#quiz-openai-key")));
   $("#openai-api-base")?.addEventListener("change", persistOpenAiBaseFromField);
   $("#btn-test-api")?.addEventListener("click", async () => {
     const status = $("#api-test-status");
