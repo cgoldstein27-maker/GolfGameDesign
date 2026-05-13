@@ -87,6 +87,43 @@ function persist() {
   saveState(state, currentStateStorageKey);
 }
 
+/** Detect saved flashcards from older builds (e.g. “Explain or recall” or Q === A). */
+function flashcardsNeedRebuild(fcs, content) {
+  const c = (content || "").trim();
+  if (c.length >= 40 && (!Array.isArray(fcs) || fcs.length === 0)) return true;
+  if (!Array.isArray(fcs) || fcs.length === 0) return false;
+  return fcs.some((fc) => {
+    if (!fc || typeof fc !== "object") return true;
+    const q = String(fc.q || "").trim();
+    const a = String(fc.a || "").trim();
+    if (!q || !a) return true;
+    if (q.startsWith("Explain or recall")) return true;
+    return q.replace(/\s+/g, " ").toLowerCase() === a.replace(/\s+/g, " ").toLowerCase();
+  });
+}
+
+/** Rebuild flashcards + SRS from note text so Study / local Quiz pick up new card logic. */
+function migrateFlashcardsIfNeeded() {
+  let changed = false;
+  for (const doc of state.docs) {
+    const content = (doc.content || "").trim();
+    if (!content) continue;
+    if (!flashcardsNeedRebuild(doc.flashcards, content)) continue;
+    for (const fc of doc.flashcards || []) {
+      if (fc?.id) delete state.srs[fc.id];
+    }
+    const { chunks, flashcards } = buildStudyMaterial(content, doc.id);
+    doc.chunks = chunks;
+    doc.flashcards = flashcards;
+    doc.summary = summarize(content, 6);
+    for (const fc of flashcards) {
+      state.srs[fc.id] = { ...defaultSrsMeta(), nextReview: 0 };
+    }
+    changed = true;
+  }
+  if (changed) persist();
+}
+
 const normalizeEmail = (email) => String(email || "").trim().toLowerCase();
 
 function userIdFromEmail(email) {
@@ -949,6 +986,7 @@ function initMainApp() {
   currentStateStorageKey = storageKeyForSession(loadSessionRecord());
   state = loadState(currentStateStorageKey);
   if (!state.docs.length) state = { ...defaultState(), ...state };
+  migrateFlashcardsIfNeeded();
   bindUi();
   syncOpenAiKeyFields();
   syncOpenAiBaseField();
