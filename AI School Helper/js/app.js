@@ -14,7 +14,6 @@ import { recordWeak, weakTopicList } from "./weak-topics.js";
 import {
   answerQuestion,
   generateNotesForTopic,
-  refineNotesWithAI,
   generateConceptualQuiz,
   generateAdvancedQuiz,
 } from "./chat.js";
@@ -823,34 +822,6 @@ function bindUi() {
     refreshSelectors();
     renderWeakTopics();
     $("#upload-status").textContent = "Regenerated summary and cards.";
-  });
-
-  $("#btn-refine-notes").addEventListener("click", async () => {
-    const doc = state.activeDocId ? getDoc(state.activeDocId) : null;
-    const status = $("#refine-status");
-    if (!doc) return;
-    const apiKey = readApiKey();
-    status.textContent = "Refining notes…";
-    const result = await refineNotesWithAI(doc.content, doc.title, apiKey);
-    if (!result.ok) {
-      status.textContent = result.error;
-      return;
-    }
-    for (const fc of doc.flashcards || []) delete state.srs[fc.id];
-    doc.content = result.text.trim();
-    const { chunks, flashcards } = buildStudyMaterial(doc.content, doc.id);
-    doc.chunks = chunks;
-    doc.flashcards = flashcards;
-    doc.summary = summarize(doc.content, 6);
-    for (const fc of flashcards) {
-      state.srs[fc.id] = { ...defaultSrsMeta(), nextReview: 0 };
-    }
-    persist();
-    renderDocList();
-    renderActiveDoc();
-    refreshSelectors();
-    renderWeakTopics();
-    status.textContent = "Notes refined. Summary and flashcards were rebuilt from the improved text.";
   });
 
   $("#srs-reveal").addEventListener("click", (e) => {

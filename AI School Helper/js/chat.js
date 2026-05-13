@@ -206,52 +206,6 @@ async function openAiQuizChat(userBlock, systemContent, temperature, apiKey) {
   return { ok: true, raw };
 }
 
-/**
- * Rewrite rough notes into clearer, higher-quality study notes (OpenAI required).
- * Stays grounded in the supplied text; flags uncertain claims with [verify].
- */
-export async function refineNotesWithAI(rawNotes, title, apiKey) {
-  if (!apiKey || !apiKey.startsWith("sk-")) {
-    return { ok: false, error: "Add an OpenAI API key in the Chat tab to refine notes." };
-  }
-  const trimmed = (rawNotes || "").trim().slice(0, 28000);
-  if (!trimmed) return { ok: false, error: "No note text to refine." };
-
-  try {
-    const res = await fetchOpenAiChatCompletions(
-      apiKey,
-      {
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are an academic study coach. Rewrite the student's notes into polished study notes: clear headings, precise definitions, numbered steps where useful, and short examples. Expand only with widely standard educational explanations that are consistent with the student's text. Do not invent specific facts, dates, or citations not implied by the notes; if something is unclear, write [verify] instead of guessing. Tone: formal but readable for high school. No meta commentary.",
-          },
-          {
-            role: "user",
-            content: `Document title (context): ${title || "Untitled"}\n\nORIGINAL NOTES:\n${trimmed}\n\nProduce refined notes with sections: Overview, Key terms, Core ideas, Examples / applications, Common confusions, Short review checklist (bullets).`,
-          },
-        ],
-        max_tokens: 3500,
-        temperature: 0.35,
-      },
-      120000
-    );
-
-    if (!res.ok) {
-      const err = await res.text();
-      return { ok: false, error: `API error (${res.status}): ${err.slice(0, 180)}` };
-    }
-    const data = await res.json();
-    const text = data.choices?.[0]?.message?.content?.trim();
-    if (!text) return { ok: false, error: "Empty response from API." };
-    return { ok: true, text };
-  } catch (e) {
-    return { ok: false, error: String(e.message || e) };
-  }
-}
-
 /** Turn model JSON { questions: [...] } into quiz UI items (options shuffled). */
 function mapParsedQuestionsToItems(parsed, defaultTopicKey) {
   const qs = parsed?.questions;
