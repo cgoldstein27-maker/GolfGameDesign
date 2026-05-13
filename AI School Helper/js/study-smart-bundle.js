@@ -134,6 +134,85 @@
       .filter((s) => s.length > 12);
   }
 
+  function getChunkSegments(chunkText) {
+    var raw = String(chunkText || "").trim();
+    if (!raw) return [];
+    var minSeg = 6;
+    var segs = raw
+      .replace(/\s+/g, " ")
+      .split(/(?<=[.!?])\s+/)
+      .map(function (s) {
+        return s.trim();
+      })
+      .filter(function (s) {
+        return s.length > minSeg;
+      });
+    if (segs.length < 2) {
+      segs = raw
+        .split(/;/)
+        .map(function (s) {
+          return s.trim();
+        })
+        .filter(function (s) {
+          return s.length > minSeg;
+        });
+    }
+    if (segs.length < 2) {
+      segs = raw
+        .split(/\n+/)
+        .map(function (s) {
+          return s.trim();
+        })
+        .filter(function (s) {
+          return s.length > minSeg;
+        });
+    }
+    if (segs.length < 2 && raw.length > 70) {
+      var mid = Math.floor(raw.length / 2);
+      var cut = raw.lastIndexOf(" ", mid);
+      if (cut < 16) cut = raw.indexOf(" ", mid);
+      if (cut > 12 && cut < raw.length - 12) {
+        segs = [raw.slice(0, cut).trim(), raw.slice(cut + 1).trim()];
+      }
+    }
+    if (segs.length === 0 && raw.length > minSeg) return [raw];
+    return segs;
+  }
+
+  function qaTokenOverlap(q, a) {
+    var wq = tokenize(q);
+    var wa = tokenize(a);
+    var setQ = new Set(wq);
+    var setA = new Set(wa);
+    if (setQ.size === 0 || setA.size === 0) return 0;
+    var inter = 0;
+    setQ.forEach(function (w) {
+      if (setA.has(w)) inter++;
+    });
+    return inter / (setQ.size + setA.size - inter);
+  }
+
+  function ensureDistinctAnswer(q, answer, fullChunk, segments) {
+    var a = (answer || "").trim();
+    if (!a || !q) return a;
+    var qn = q.replace(/\s+/g, " ").trim().toLowerCase();
+    var an = a.replace(/\s+/g, " ").trim().toLowerCase();
+    if (an === qn) {
+      if (segments.length >= 2) return segments.slice(1).join(" ").trim().slice(0, 1200);
+      var tail = fullChunk.slice(Math.floor(fullChunk.length * 0.4)).trim();
+      if (tail.length > 14 && tail !== a) return tail.slice(0, 1200);
+    }
+    if (qaTokenOverlap(q, a) > 0.48) {
+      if (segments.length >= 2) {
+        var alt = segments.slice(1).join(" ").trim();
+        if (alt.length > 12 && qaTokenOverlap(q, alt) < 0.48) return alt.slice(0, 1200);
+      }
+      var tail2 = fullChunk.slice(Math.floor(fullChunk.length * 0.35)).trim();
+      if (tail2.length > 14) return tail2.slice(0, 1200);
+    }
+    return a;
+  }
+
   /** Pick top sentences by TF overlap with the whole doc (extractive summary). */
   function summarize(content, maxSentences) {
     maxSentences = maxSentences === undefined ? 5 : maxSentences;
@@ -176,10 +255,10 @@
     let n = 0;
     for (let ci = 0; ci < chunks.length; ci++) {
       const c = chunks[ci];
-      const sentences = splitSentences(c.text);
-      if (sentences.length === 0) continue;
-      const head = sentences[0];
-      const rest = sentences.slice(1).join(" ");
+      const segments = getChunkSegments(c.text);
+      if (segments.length === 0) continue;
+      const head = segments[0];
+      const rest = segments.slice(1).join(" ").trim();
       const firstLineFull = c.text.split("\n")[0].trim();
       const afterLine = bodyAfterFirstLine(c.text);
       var back =
@@ -187,16 +266,17 @@
           ? rest
           : afterLine.length > 12
             ? afterLine
-            : sentences.length >= 2
-              ? sentences.slice(1).join(" ")
+            : segments.length >= 2
+              ? segments.slice(1).join(" ")
               : summarize(c.text, 3);
       back = stripLeadingDuplicate(firstLineFull, head, back);
       if (back.length < 15) {
         back = summarize(c.text, 4).slice(0, 1200);
         back = stripLeadingDuplicate(firstLineFull, head, back);
       }
-      if (back.length < 12) back = c.text.trim().slice(0, 1200);
-      back = stripLeadingDuplicate(firstLineFull, head, back);
+      if (back.length < 12 && segments.length >= 2) {
+        back = segments.slice(1).join(" ").trim().slice(0, 1200);
+      }
       if (back.length < 12 && head.length > 36) {
         back = head.slice(Math.floor(head.length * 0.5)).trim();
       }
@@ -214,6 +294,7 @@
         : rest.length > 12 || afterLine.length > 12
           ? 'What does your text say about "' + c.topic + '"?'
           : 'What is the main idea for "' + c.topic + '"?';
+      back = ensureDistinctAnswer(qStem, back, c.text, segments);
       flashcards.push({
         id: idPrefix + "-fc-" + n++,
         topic: c.topic,
@@ -221,17 +302,16 @@
         q: qStem,
         a: back.slice(0, 1200),
       });
-      if (sentences.length >= 2) {
+      if (segments.length >= 2) {
+        var h = head.slice(0, 120) + (head.length > 120 ? "…" : "");
+        var q2 = 'In your notes, what follows this idea? "' + h + '"';
+        var a2 = ensureDistinctAnswer(q2, segments[1].slice(0, 800), c.text, segments);
         flashcards.push({
           id: idPrefix + "-fc-" + n++,
           topic: c.topic,
           topicKey: c.topicKey,
-          q:
-            'In your notes, what follows this idea? "' +
-            head.slice(0, 120) +
-            (head.length > 120 ? "…" : "") +
-            '"',
-          a: sentences[1].slice(0, 800),
+          q: q2,
+          a: a2,
         });
       }
     }

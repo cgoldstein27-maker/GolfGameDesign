@@ -110,6 +110,75 @@ function splitSentences(text) {
 }
 
 /**
+ * Segments for flashcards: prefer sentences, then semicolon clauses, then lines,
+ * then a mid-string split so “one statement” notes still yield a front vs back.
+ */
+function getChunkSegments(chunkText) {
+  const raw = String(chunkText || "").trim();
+  if (!raw) return [];
+  const minSeg = 6;
+  let segs = raw
+    .replace(/\s+/g, " ")
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > minSeg);
+  if (segs.length < 2) {
+    segs = raw
+      .split(/;/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > minSeg);
+  }
+  if (segs.length < 2) {
+    segs = raw
+      .split(/\n+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > minSeg);
+  }
+  if (segs.length < 2 && raw.length > 70) {
+    const mid = Math.floor(raw.length / 2);
+    let cut = raw.lastIndexOf(" ", mid);
+    if (cut < 16) cut = raw.indexOf(" ", mid);
+    if (cut > 12 && cut < raw.length - 12) {
+      segs = [raw.slice(0, cut).trim(), raw.slice(cut + 1).trim()];
+    }
+  }
+  if (segs.length === 0 && raw.length > minSeg) return [raw];
+  return segs;
+}
+
+/** Token Jaccard 0–1; high value means Q and A say the same thing. */
+function qaTokenOverlap(q, a) {
+  const tq = new Set(tokenize(q));
+  const ta = new Set(tokenize(a));
+  if (tq.size === 0 || ta.size === 0) return 0;
+  let inter = 0;
+  for (const w of tq) if (ta.has(w)) inter++;
+  return inter / (tq.size + ta.size - inter);
+}
+
+/** Shorten or swap answer so it is not the same wording as the question. */
+function ensureDistinctAnswer(q, answer, fullChunk, segments) {
+  let a = (answer || "").trim();
+  if (!a || !q) return a;
+  const qn = q.replace(/\s+/g, " ").trim().toLowerCase();
+  const an = a.replace(/\s+/g, " ").trim().toLowerCase();
+  if (an === qn) {
+    if (segments.length >= 2) return segments.slice(1).join(" ").trim().slice(0, 1200);
+    const tail = fullChunk.slice(Math.floor(fullChunk.length * 0.4)).trim();
+    if (tail.length > 14 && tail !== a) return tail.slice(0, 1200);
+  }
+  if (qaTokenOverlap(q, a) > 0.48) {
+    if (segments.length >= 2) {
+      const alt = segments.slice(1).join(" ").trim();
+      if (alt.length > 12 && qaTokenOverlap(q, alt) < 0.48) return alt.slice(0, 1200);
+    }
+    const tail = fullChunk.slice(Math.floor(fullChunk.length * 0.35)).trim();
+    if (tail.length > 14) return tail.slice(0, 1200);
+  }
+  return a;
+}
+
+/**
  * Simple extractive summary: score sentences by term frequency in document.
  * Picks the top few sentences and joins them (order preserved in doc flow via index pick).
  */
@@ -149,10 +218,10 @@ export function buildStudyMaterial(content, idPrefix) {
   const flashcards = [];
   let n = 0;
   for (const c of chunks) {
-    const sentences = splitSentences(c.text);
-    if (sentences.length === 0) continue;
-    const head = sentences[0];
-    const rest = sentences.slice(1).join(" ");
+    const segments = getChunkSegments(c.text);
+    if (segments.length === 0) continue;
+    const head = segments[0];
+    const rest = segments.slice(1).join(" ").trim();
     const firstLineFull = c.text.split("\n")[0].trim();
     const afterLine = bodyAfterFirstLine(c.text);
     // Answer = supporting detail only, not the same line as the “topic” prompt.
@@ -161,16 +230,17 @@ export function buildStudyMaterial(content, idPrefix) {
         ? rest
         : afterLine.length > 12
           ? afterLine
-          : sentences.length >= 2
-            ? sentences.slice(1).join(" ")
+          : segments.length >= 2
+            ? segments.slice(1).join(" ")
             : summarize(c.text, 3);
     back = stripLeadingDuplicate(firstLineFull, head, back);
     if (back.length < 15) {
       back = summarize(c.text, 4).slice(0, 1200);
       back = stripLeadingDuplicate(firstLineFull, head, back);
     }
-    if (back.length < 12) back = c.text.trim().slice(0, 1200);
-    back = stripLeadingDuplicate(firstLineFull, head, back);
+    if (back.length < 12 && segments.length >= 2) {
+      back = segments.slice(1).join(" ").trim().slice(0, 1200);
+    }
     if (back.length < 12 && head.length > 36) {
       const cut = Math.floor(head.length * 0.5);
       back = head.slice(cut).trim();
@@ -191,6 +261,8 @@ export function buildStudyMaterial(content, idPrefix) {
         ? `What does your text say about “${c.topic}”?`
         : `What is the main idea for “${c.topic}”?`;
 
+    back = ensureDistinctAnswer(qStem, back, c.text, segments);
+
     flashcards.push({
       id: `${idPrefix}-fc-${n++}`,
       topic: c.topic,
@@ -198,13 +270,17 @@ export function buildStudyMaterial(content, idPrefix) {
       q: qStem,
       a: back.slice(0, 1200),
     });
-    if (sentences.length >= 2) {
+    if (segments.length >= 2) {
+      const h = head.slice(0, 120) + (head.length > 120 ? "…" : "");
+      const ans = segments[1].slice(0, 800);
+      const q2 = `In your notes, what follows this idea? “${h}”`;
+      const a2 = ensureDistinctAnswer(q2, ans, c.text, segments);
       flashcards.push({
         id: `${idPrefix}-fc-${n++}`,
         topic: c.topic,
         topicKey: c.topicKey,
-        q: `In your notes, what follows this idea? “${head.slice(0, 120)}${head.length > 120 ? "…" : ""}”`,
-        a: sentences[1].slice(0, 800),
+        q: q2,
+        a: a2,
       });
     }
   }
