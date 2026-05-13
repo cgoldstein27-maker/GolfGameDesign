@@ -1138,6 +1138,46 @@
     return !!(s && s.rememberMe && s.userId && s.email);
   }
 
+  function flashcardsNeedRebuild(fcs, content) {
+    var c = String(content || "").trim();
+    if (c.length >= 40 && (!Array.isArray(fcs) || fcs.length === 0)) return true;
+    if (!Array.isArray(fcs) || fcs.length === 0) return false;
+    for (var fi = 0; fi < fcs.length; fi++) {
+      var fc = fcs[fi];
+      if (!fc || typeof fc !== "object") return true;
+      var q = String(fc.q || "").trim();
+      var a = String(fc.a || "").trim();
+      if (!q || !a) return true;
+      if (q.indexOf("Explain or recall") === 0) return true;
+      if (q.replace(/\s+/g, " ").toLowerCase() === a.replace(/\s+/g, " ").toLowerCase()) return true;
+    }
+    return false;
+  }
+
+  function migrateFlashcardsIfNeeded() {
+    var changed = false;
+    for (var di = 0; di < state.docs.length; di++) {
+      var doc = state.docs[di];
+      var content = String(doc.content || "").trim();
+      if (!content) continue;
+      if (!flashcardsNeedRebuild(doc.flashcards, content)) continue;
+      var oldFcs = doc.flashcards || [];
+      for (var oi = 0; oi < oldFcs.length; oi++) {
+        var of = oldFcs[oi];
+        if (of && of.id) delete state.srs[of.id];
+      }
+      var built = buildStudyMaterial(content, doc.id);
+      doc.chunks = built.chunks;
+      doc.flashcards = built.flashcards;
+      doc.summary = summarize(doc.content, 6);
+      for (var ni = 0; ni < doc.flashcards.length; ni++) {
+        state.srs[doc.flashcards[ni].id] = Object.assign({}, defaultSrsMeta(), { nextReview: 0 });
+      }
+      changed = true;
+    }
+    if (changed) persist();
+  }
+
   function initMainApp() {
     if (mainAppInitialized) return;
     mainAppInitialized = true;
@@ -1145,6 +1185,7 @@
     CURRENT_STATE_KEY = storageKeyForSession(s);
     state = loadState();
     if (!state.docs.length) state = Object.assign(defaultState(), state);
+    migrateFlashcardsIfNeeded();
     bindUi();
     syncOpenAiKeyFields();
     renderDocList();
