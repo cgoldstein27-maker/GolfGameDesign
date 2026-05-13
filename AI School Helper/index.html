@@ -63,31 +63,11 @@
         <button type="button" class="tab" data-tab="quiz" role="tab">Quiz</button>
         <button type="button" class="tab" data-tab="insights" role="tab">Weak topics</button>
         <button type="button" class="tab" data-tab="chat" role="tab">Ask notes</button>
+        <button type="button" class="tab" data-tab="settings" role="tab">API</button>
       </nav>
     </header>
 
     <main class="main">
-      <section class="card full">
-        <h2>API settings</h2>
-        <p class="hint">
-          Paste your OpenAI key once here. It is saved only in this browser and reused across AI features.
-        </p>
-        <div class="grid-2">
-          <label class="field">
-            <span>OpenAI API key</span>
-            <input type="password" id="openai-key" placeholder="sk-..." autocomplete="off" />
-          </label>
-          <label class="field">
-            <span>AI API base URL (optional)</span>
-            <input type="url" id="openai-api-base" placeholder="https://api.openai.com/v1" autocomplete="off" />
-          </label>
-        </div>
-        <div class="row">
-          <button type="button" class="btn" id="btn-test-api">Test API connection</button>
-        </div>
-        <p id="api-test-status" class="status" role="status"></p>
-      </section>
-
       <!-- Library -->
       <section id="panel-library" class="panel active" role="tabpanel">
         <div class="grid-2">
@@ -197,10 +177,6 @@
             <span>Set</span>
             <select id="quiz-doc-select"></select>
           </label>
-          <label class="field" hidden>
-            <span>OpenAI API key (optional, same as Ask notes)</span>
-            <input type="password" id="quiz-openai-key" placeholder="sk-…" autocomplete="off" />
-          </label>
           <div class="row">
             <button type="button" class="btn primary" id="btn-start-quiz">Standard quiz</button>
           </div>
@@ -248,6 +224,30 @@
             <div id="chat-log" class="chat-log"></div>
           </div>
         </div>
+      </section>
+
+      <!-- API (OpenAI key + base URL) — own tab so other screens stay focused -->
+      <section id="panel-settings" class="panel" role="tabpanel" hidden>
+        <section class="card full">
+          <h2>API settings</h2>
+          <p class="hint">
+            Paste your OpenAI key here when you want AI-backed features (Ask notes, quiz paraphrase, refine notes). It is saved only in this browser.
+          </p>
+          <div class="grid-2">
+            <label class="field">
+              <span>OpenAI API key</span>
+              <input type="password" id="openai-key" placeholder="sk-..." autocomplete="off" />
+            </label>
+            <label class="field">
+              <span>AI API base URL (optional)</span>
+              <input type="url" id="openai-api-base" placeholder="https://api.openai.com/v1" autocomplete="off" />
+            </label>
+          </div>
+          <div class="row">
+            <button type="button" class="btn" id="btn-test-api">Test API connection</button>
+          </div>
+          <p id="api-test-status" class="status" role="status"></p>
+        </section>
       </section>
     </main>
 

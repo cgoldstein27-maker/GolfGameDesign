@@ -990,7 +990,7 @@
   const USER_INDEX_KEY = "study-smart-users-v1";
   const SESSION_KEY = "study-smart-session";
   const LAST_TAB_KEY = "study-smart-last-tab";
-  var VALID_TABS = { library: 1, study: 1, quiz: 1, insights: 1, chat: 1 };
+  var VALID_TABS = { library: 1, study: 1, quiz: 1, insights: 1, chat: 1, settings: 1 };
   var mainAppInitialized = false;
   let state = defaultState();
   const $ = function (sel) {
@@ -1187,22 +1187,13 @@
       return v == null || typeof v !== "string" ? "" : v.trim().replace(/\u00a0/g, "");
     }
     var c = $("#openai-key");
-    var q = $("#quiz-openai-key");
-    return (
-      norm(c && c.value) ||
-      norm(q && q.value) ||
-      norm(localStorage.getItem(OPENAI_STORAGE)) ||
-      ""
-    );
+    return norm(c && c.value) || norm(localStorage.getItem(OPENAI_STORAGE)) || "";
   }
 
   function syncOpenAiKeyFields() {
     var v = localStorage.getItem(OPENAI_STORAGE) || "";
-    var keys = ["openai-key", "quiz-openai-key"];
-    for (var i = 0; i < keys.length; i++) {
-      var el = document.getElementById(keys[i]);
-      if (el && !el.value) el.value = v;
-    }
+    var el = document.getElementById("openai-key");
+    if (el && !el.value) el.value = v;
   }
 
   function persistOpenAiKeyFromField(el) {
@@ -1210,11 +1201,8 @@
     var v = (el.value || "").trim();
     if (v) localStorage.setItem(OPENAI_STORAGE, v);
     else localStorage.removeItem(OPENAI_STORAGE);
-    var keys2 = ["openai-key", "quiz-openai-key"];
-    for (var j = 0; j < keys2.length; j++) {
-      var other = document.getElementById(keys2[j]);
-      if (other && other !== el) other.value = v;
-    }
+    var other = document.getElementById("openai-key");
+    if (other && other !== el) other.value = v;
   }
 
   function syncOpenAiBaseField() {
@@ -1699,7 +1687,7 @@
       $("#quiz-empty").hidden = true;
       if (!quizHint && (apiKey.indexOf("sk-") !== 0 || !hasEnoughText)) {
         quizHint =
-          "Quick mode: questions follow your flashcards. Add an API key for paraphrased questions from full notes.";
+          "Quick mode: questions follow your flashcards. Add a key under the API tab for paraphrased questions from full notes.";
       }
       renderQuizQuestion();
       if (quizHint) fb.textContent = quizHint;
@@ -1742,9 +1730,8 @@
     }
     var apiKey = readApiKey();
     if (apiKey.indexOf("sk-") !== 0) {
-      fb.textContent = "No API key found. Using local quiz mode instead.";
+      fb.textContent = "Advanced quiz requires an OpenAI API key. Add it under the API tab.";
       fb.hidden = false;
-      startQuiz();
       return;
     }
     fb.hidden = false;
@@ -1898,6 +1885,10 @@
               syncOpenAiKeyFields();
               syncOpenAiBaseField();
             }
+            if (name === "settings") {
+              syncOpenAiKeyFields();
+              syncOpenAiBaseField();
+            }
           };
         })(tabEls[i])
       );
@@ -2009,12 +2000,6 @@
     $("#openai-key").addEventListener("change", function () {
       persistOpenAiKeyFromField($("#openai-key"));
     });
-    var quizKeyEl = $("#quiz-openai-key");
-    if (quizKeyEl) {
-      quizKeyEl.addEventListener("change", function () {
-        persistOpenAiKeyFromField($("#quiz-openai-key"));
-      });
-    }
     var apiBaseEl = $("#openai-api-base");
     if (apiBaseEl) {
       apiBaseEl.addEventListener("change", function () {
