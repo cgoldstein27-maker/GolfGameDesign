@@ -1,6 +1,6 @@
 /**
  * openai-api.js — single place for OpenAI-compatible chat/completions calls.
- * Used by Ask notes, quiz generation, and refine-notes.
+ * Used by Ask notes and quiz generation.
  *
  * Optional base URL (localStorage) points at any OpenAI-compatible gateway;
  * default is https://api.openai.com/v1

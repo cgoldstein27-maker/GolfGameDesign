@@ -671,7 +671,7 @@
       });
   }
 
-  /* ========== WEB + AI (Wikipedia context, note refine, advanced quiz) ========== */
+  /* ========== WEB + AI (Wikipedia context, advanced quiz) ========== */
   var WIKI_REQUEST_TIMEOUT_MS = 8000;
   var WIKI_TOTAL_TIMEOUT_MS = 12000;
 
@@ -795,67 +795,6 @@
           });
         }
         return finishResponse(res);
-      })
-      .catch(function (e) {
-        return { ok: false, error: String(e.message || e) };
-      });
-  }
-
-  function refineNotesWithAI(rawNotes, title, apiKey) {
-    if (!apiKey || apiKey.indexOf("sk-") !== 0) {
-      var local = String(rawNotes || "").trim();
-      if (!local) return Promise.resolve({ ok: false, error: "No note text to refine." });
-      var lines = local.split(/\n+/).map(function (x) { return x.trim(); }).filter(Boolean);
-      var bullets = lines.slice(0, 12).map(function (x) { return "- " + x; }).join("\n");
-      var localRefined =
-        "# " +
-        (title || "Refined notes") +
-        "\n\n## Overview\n" +
-        bullets +
-        "\n\n## Key terms\n- Add or clarify definitions from your class notes.\n\n## Core ideas\n- Group related points into clear sections.\n\n## Examples / applications\n- Add one worked example using your own wording.\n\n## Common confusions\n- List what is easiest to mix up and why.\n\n## Review checklist\n- [ ] I can explain this topic from memory.\n- [ ] I can answer one practice question.\n";
-      return Promise.resolve({ ok: true, text: localRefined });
-    }
-    var trimmed = (rawNotes || "").trim().slice(0, 28000);
-    if (!trimmed) return Promise.resolve({ ok: false, error: "No note text to refine." });
-    return openaiChatFetch(
-      apiKey,
-      {
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are an academic study coach. Rewrite the student's notes into polished study notes: clear headings, precise definitions, numbered steps where useful, and short examples. Expand only with widely standard educational explanations that are consistent with the student's text. Do not invent specific facts, dates, or citations not implied by the notes; if something is unclear, write [verify] instead of guessing. Tone: formal but readable for high school. No meta commentary.",
-          },
-          {
-            role: "user",
-            content:
-              "Document title (context): " +
-              (title || "Untitled") +
-              "\n\nORIGINAL NOTES:\n" +
-              trimmed +
-              "\n\nProduce refined notes with sections: Overview, Key terms, Core ideas, Examples / applications, Common confusions, Short review checklist (bullets).",
-          },
-        ],
-        max_tokens: 3500,
-        temperature: 0.35,
-      },
-      120000
-    )
-      .then(function (res) {
-        if (!res.ok) {
-          return res.text().then(function (err) {
-            return { ok: false, error: "API error (" + res.status + "): " + err.slice(0, 180) };
-          });
-        }
-        return res.json().then(function (data) {
-          var text =
-            data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content
-              ? data.choices[0].message.content.trim()
-              : "";
-          if (!text) return { ok: false, error: "Empty response from API." };
-          return { ok: true, text: text };
-        });
       })
       .catch(function (e) {
         return { ok: false, error: String(e.message || e) };
@@ -1937,37 +1876,6 @@
       refreshSelectors();
       renderWeakTopics();
       $("#upload-status").textContent = "Regenerated summary and cards.";
-    });
-
-    $("#btn-refine-notes").addEventListener("click", function () {
-      var doc = state.activeDocId ? getDoc(state.activeDocId) : null;
-      var status = $("#refine-status");
-      if (!doc) return;
-      var apiKey = readApiKey();
-      status.textContent = "Refining notes…";
-      refineNotesWithAI(doc.content, doc.title, apiKey).then(function (result) {
-        if (!result.ok) {
-          status.textContent = result.error;
-          return;
-        }
-        var fcs = doc.flashcards || [];
-        for (var i = 0; i < fcs.length; i++) delete state.srs[fcs[i].id];
-        doc.content = result.text.trim();
-        var built = buildStudyMaterial(doc.content, doc.id);
-        doc.chunks = built.chunks;
-        doc.flashcards = built.flashcards;
-        doc.summary = summarize(doc.content, 6);
-        for (var j = 0; j < doc.flashcards.length; j++) {
-          state.srs[doc.flashcards[j].id] = Object.assign({}, defaultSrsMeta(), { nextReview: 0 });
-        }
-        persist();
-        renderDocList();
-        renderActiveDoc();
-        refreshSelectors();
-        renderWeakTopics();
-        status.textContent =
-          "Notes refined. Summary and flashcards were rebuilt from the improved text.";
-      });
     });
 
     $("#srs-reveal").addEventListener("click", function (e) {
