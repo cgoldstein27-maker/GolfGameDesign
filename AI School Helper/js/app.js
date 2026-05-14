@@ -392,7 +392,7 @@ let apStarterDataCache = null;
 
 async function loadApStarterData() {
   if (apStarterDataCache) return apStarterDataCache;
-  const res = await fetch("js/ap-starter-topics.json", { cache: "force-cache" });
+  const res = await fetch("js/ap-starter-topics.json", { cache: "no-cache" });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   apStarterDataCache = await res.json();
   return apStarterDataCache;

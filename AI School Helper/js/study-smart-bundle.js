@@ -1627,7 +1627,7 @@
   var apStarterDataCache = null;
   function loadApStarterData() {
     if (apStarterDataCache) return Promise.resolve(apStarterDataCache);
-    return fetch("js/ap-starter-topics.json", { cache: "force-cache" })
+    return fetch("js/ap-starter-topics.json", { cache: "no-cache" })
       .then(function (res) {
         if (!res.ok) throw new Error("HTTP " + res.status);
         return res.json();
