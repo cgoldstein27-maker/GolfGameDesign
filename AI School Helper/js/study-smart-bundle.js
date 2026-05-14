@@ -346,10 +346,11 @@
       }
       var longHeading =
         firstLineFull.length > 44 || c.topic.slice(-1) === "…" || c.topic.slice(-3) === "...";
+      var tq = c.topic.trim();
       var qStem = longHeading
         ? rest.length > 12 || afterLine.length > 12
-          ? "Which detail is spelled out in this part of your notes?"
-          : "Which statement best matches what this part of your notes is about?"
+          ? 'Which detail do your notes spell out for "' + tq + '"?'
+          : 'Which statement best matches your notes on "' + tq + '"?'
         : rest.length > 12 || afterLine.length > 12
           ? 'What does your text say about "' + c.topic + '"?'
           : 'What is the main idea for "' + c.topic + '"?';
@@ -453,8 +454,9 @@
         }
       }
       var question = String(source[i].q || "").trim();
+      var topicLabel = String(source[i].topic || "this set").trim();
       if (quizStemConflictsAnswer(question, correct)) {
-        question = "Which statement matches this idea from your notes?";
+        question = 'Which statement matches your notes on "' + topicLabel + '"?';
       }
       var cor = (correct || "").trim();
       if (cor.length >= 24) {
@@ -462,7 +464,7 @@
         for (var len = Math.min(80, cor.length); len >= 22; len -= 6) {
           var frag = cor.slice(0, len).trim().toLowerCase();
           if (frag.length >= 20 && ql.indexOf(frag) !== -1) {
-            question = "Which option matches what your notes say for this card?";
+            question = 'Which option matches what your notes say on "' + topicLabel + '"?';
             break;
           }
         }
@@ -1303,6 +1305,39 @@
     if (changed) persist();
   }
 
+  function patchSectionPromptsOnFlashcards() {
+    var changed = false;
+    for (var di = 0; di < state.docs.length; di++) {
+      var doc = state.docs[di];
+      var fcs = doc.flashcards || [];
+      for (var fi = 0; fi < fcs.length; fi++) {
+        var fc = fcs[fi];
+        if (!fc || typeof fc !== "object") continue;
+        var t = String(fc.topic || "").trim();
+        var q = String(fc.q || "");
+        if (!t || !q) continue;
+        if (q.indexOf(t) !== -1) continue;
+        var next = null;
+        if (/Which detail is spelled out in this part of your notes/i.test(q)) {
+          next = 'Which detail do your notes spell out for "' + t + '"?';
+        } else if (/Which statement best matches what this part of your notes is about/i.test(q)) {
+          next = 'Which statement best matches your notes on "' + t + '"?';
+        } else if (/Which statement matches this idea from your notes/i.test(q)) {
+          next = 'Which statement matches your notes on "' + t + '"?';
+        } else if (/Which option matches what your notes say for this card/i.test(q)) {
+          next = 'Which option matches what your notes say on "' + t + '"?';
+        } else if (/this part of your notes/i.test(q)) {
+          next = 'Which detail do your notes spell out for "' + t + '"?';
+        }
+        if (next) {
+          fc.q = next;
+          changed = true;
+        }
+      }
+    }
+    if (changed) persist();
+  }
+
   function initMainApp() {
     if (mainAppInitialized) return;
     mainAppInitialized = true;
@@ -1311,6 +1346,7 @@
     state = loadState();
     if (!state.docs.length) state = Object.assign(defaultState(), state);
     migrateFlashcardsIfNeeded();
+    patchSectionPromptsOnFlashcards();
     bindUi();
     syncOpenAiKeyFields();
     renderDocList();
