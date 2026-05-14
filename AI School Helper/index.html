@@ -46,16 +46,20 @@
   <!-- Shell: header (tabs) + main (one visible .panel per tab) + footer. Scripts at bottom load PDF.js then study-smart-bundle.js for file://. -->
   <div class="app" id="main-app">
     <header class="header">
-      <div class="brand">
-        <span class="logo" aria-hidden="true"></span>
-        <div>
-          <h1>Study Smart</h1>
-          <p class="tagline">Note library, summaries, flashcards, and spaced repetition</p>
+      <div class="header-top">
+        <div class="brand">
+          <span class="logo" aria-hidden="true"></span>
+          <div>
+            <h1>Study Smart</h1>
+            <p class="tagline">Note library, summaries, flashcards, and spaced repetition</p>
+          </div>
         </div>
-      </div>
-      <div class="header-session" id="header-session" hidden>
-        <span class="session-greeting" id="session-greeting"></span>
-        <button type="button" class="btn btn-small" id="btn-sign-out">Sign out</button>
+        <div class="header-meta">
+          <div class="header-session" id="header-session" hidden>
+            <span class="session-greeting" id="session-greeting"></span>
+            <button type="button" class="btn btn-small" id="btn-sign-out">Sign out</button>
+          </div>
+        </div>
       </div>
       <nav class="tabs" role="tablist" aria-label="Main">
         <button type="button" class="tab active" data-tab="library" role="tab" aria-selected="true">Library</button>
@@ -65,6 +69,46 @@
         <button type="button" class="tab" data-tab="chat" role="tab">Ask notes</button>
         <button type="button" class="tab" data-tab="settings" role="tab">API</button>
       </nav>
+      <div id="streak-widget" class="streak-widget streak-slot streak-tier-0" hidden>
+        <div class="streak-hero">
+          <div class="streak-flame-stack" aria-hidden="true">
+            <svg class="streak-flame-svg streak-flame-svg--hero" viewBox="0 0 64 80" width="56" height="70">
+              <defs>
+                <linearGradient id="streak-flame-outer-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#e87010" />
+                  <stop offset="55%" stop-color="#ff9f2e" />
+                  <stop offset="100%" stop-color="#ffb347" />
+                </linearGradient>
+                <linearGradient id="streak-flame-inner-grad" x1="0%" y1="100%" x2="80%" y2="15%">
+                  <stop offset="0%" stop-color="#fff5e6" />
+                  <stop offset="100%" stop-color="#ffffff" />
+                </linearGradient>
+              </defs>
+              <path
+                class="streak-flame-hero-outer"
+                fill="url(#streak-flame-outer-grad)"
+                d="M32 6c12 16 22 28 20 46-1 14-10 24-20 24S13 66 12 52C10 32 20 22 32 6z"
+              />
+              <path
+                class="streak-flame-hero-inner"
+                fill="url(#streak-flame-inner-grad)"
+                d="M32 22c6 9 12 16 11 28-1 8-5 14-11 14s-10-6-11-14c-1-12 5-19 11-28z"
+              />
+            </svg>
+          </div>
+          <div id="streak-count" class="streak-count streak-count--hero">0</div>
+          <div id="streak-caption" class="streak-caption streak-caption--hero">day streak!</div>
+        </div>
+        <div class="streak-week" id="streak-week-panel">
+          <div class="streak-week-labels" aria-hidden="true">
+            <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+          </div>
+          <div class="streak-week-track" id="streak-week-track" role="list" aria-label="This week"></div>
+          <p class="streak-week-msg" id="streak-week-msg">
+            <span id="streak-week-msg-lead"></span><span id="streak-week-msg-hot" class="streak-msg-hot"></span>
+          </p>
+        </div>
+      </div>
     </header>
 
     <main class="main">
@@ -194,6 +238,10 @@
         <div class="card">
           <h2>Weak topics over time</h2>
           <p class="hint">Topics are inferred from the first line of each note chunk. Missed quiz questions and “Again” in SRS increase weakness.</p>
+          <div class="row weak-reset-row">
+            <button type="button" class="btn" id="btn-reset-weak-topics">Reset weak topic stats</button>
+            <span id="weak-reset-status" class="status" role="status"></span>
+          </div>
           <div id="weak-list" class="weak-list"></div>
           <p id="weak-empty" class="empty">No data yet — complete quizzes or SRS reviews.</p>
         </div>

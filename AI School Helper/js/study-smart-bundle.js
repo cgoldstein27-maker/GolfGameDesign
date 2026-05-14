@@ -20,7 +20,14 @@
   let CURRENT_STATE_KEY = STORAGE_KEY_BASE;
 
   function defaultState() {
-    return { docs: [], srs: {}, weakTopics: {}, activeDocId: null };
+    return {
+      docs: [],
+      srs: {},
+      weakTopics: {},
+      activeDocId: null,
+      streak: { count: 0, lastDate: null },
+      weekRing: { start: null, days: [false, false, false, false, false, false, false] },
+    };
   }
 
   function loadState() {
@@ -40,6 +47,197 @@
 
   function newId() {
     return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+
+  function calendarDateKey(d) {
+    d = d || new Date();
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+
+  function yesterdayKey() {
+    var d = new Date();
+    d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() - 1);
+    return calendarDateKey(d);
+  }
+
+  function weekSundayKey(d) {
+    d = d || new Date();
+    var x = new Date(d);
+    x.setHours(12, 0, 0, 0);
+    var dow = x.getDay();
+    x.setDate(x.getDate() - dow);
+    return calendarDateKey(x);
+  }
+
+  function syncWeekRingToCalendar(st) {
+    var ws = weekSundayKey();
+    if (!st.weekRing || typeof st.weekRing !== "object" || !Array.isArray(st.weekRing.days) || st.weekRing.days.length !== 7) {
+      st.weekRing = { start: ws, days: [false, false, false, false, false, false, false] };
+      return true;
+    }
+    if (st.weekRing.start !== ws) {
+      st.weekRing.start = ws;
+      st.weekRing.days = [false, false, false, false, false, false, false];
+      return true;
+    }
+    return false;
+  }
+
+  function markWeekRingDayStudied(st) {
+    syncWeekRingToCalendar(st);
+    st.weekRing.days[new Date().getDay()] = true;
+  }
+
+  function getWeekRingSlots(st) {
+    syncWeekRingToCalendar(st);
+    var dow = new Date().getDay();
+    var days = st.weekRing.days;
+    var out = [];
+    for (var i = 0; i < 7; i++) {
+      if (days[i]) out.push({ kind: "done", dow: i });
+      else if (i < dow) out.push({ kind: "missed", dow: i });
+      else if (i === dow) out.push({ kind: "today", dow: i });
+      else out.push({ kind: "future", dow: i });
+    }
+    return out;
+  }
+
+  function weekCompletedCount(st) {
+    if (!st.weekRing || !st.weekRing.days) return 0;
+    var c = 0;
+    for (var i = 0; i < 7; i++) if (st.weekRing.days[i]) c++;
+    return c;
+  }
+
+  function streakWeekMotivation(doneInWeek) {
+    if (doneInWeek === 0) return { lead: "Start strong — ", hot: "one session today locks it in." };
+    if (doneInWeek <= 3) return { lead: "You're halfway to your ", hot: "perfect week!" };
+    if (doneInWeek <= 5) return { lead: "You're close to a ", hot: "full week of studying." };
+    return { lead: "", hot: "Perfect week — incredible consistency!" };
+  }
+
+  function ensureStreak(st) {
+    if (!st.streak || typeof st.streak !== "object") {
+      st.streak = { count: 0, lastDate: null };
+      return;
+    }
+    if (typeof st.streak.count !== "number" || st.streak.count < 0) st.streak.count = 0;
+    if (st.streak.lastDate != null && typeof st.streak.lastDate !== "string") st.streak.lastDate = null;
+  }
+
+  function streakNormalizeIfLapsed(st) {
+    ensureStreak(st);
+    var last = st.streak.lastDate;
+    if (!last) return false;
+    var today = calendarDateKey();
+    if (last === today) return false;
+    var yKey = yesterdayKey();
+    if (last === yKey) return false;
+    st.streak.count = 0;
+    st.streak.lastDate = null;
+    return true;
+  }
+
+  function applyStreakActivity(st) {
+    ensureStreak(st);
+    var today = calendarDateKey();
+    if (st.streak.lastDate === today) return false;
+    var last = st.streak.lastDate;
+    var yKey = yesterdayKey();
+    if (last == null) {
+      st.streak.count = 1;
+    } else if (last === yKey) {
+      st.streak.count = Math.max(1, st.streak.count + 1);
+    } else {
+      st.streak.count = 1;
+    }
+    st.streak.lastDate = today;
+    markWeekRingDayStudied(st);
+    return true;
+  }
+
+  function streakFlameTier(count) {
+    var n = Math.max(0, Math.floor(count));
+    if (n <= 0) return 0;
+    if (n <= 2) return 1;
+    if (n <= 6) return 2;
+    if (n <= 13) return 3;
+    if (n <= 29) return 4;
+    return 5;
+  }
+
+  function getStreakUiState(st) {
+    ensureStreak(st);
+    var today = calendarDateKey();
+    var last = st.streak.lastDate;
+    var count = st.streak.count;
+    var atRisk = count > 0 && last !== today;
+    return { count: count, tier: streakFlameTier(count), atRisk: atRisk };
+  }
+
+  function renderStreakFlame() {
+    var widget = document.getElementById("streak-widget");
+    if (!widget) return;
+    var s = loadSessionRecord();
+    var em = s && s.email ? String(s.email).trim() : "";
+    if (!em) {
+      widget.hidden = true;
+      widget.setAttribute("hidden", "");
+      return;
+    }
+    if (syncWeekRingToCalendar(state)) persist();
+    var ui = getStreakUiState(state);
+    widget.hidden = false;
+    widget.removeAttribute("hidden");
+    widget.className = "streak-widget streak-slot streak-tier-" + ui.tier + (ui.atRisk ? " streak-at-risk" : "");
+    var countEl = document.getElementById("streak-count");
+    var cap = document.getElementById("streak-caption");
+    if (countEl) countEl.textContent = String(ui.count);
+    if (cap) {
+      if (ui.count === 0) cap.textContent = "Study today to start!";
+      else if (ui.count === 1) cap.textContent = "day streak!";
+      else cap.textContent = "days streak!";
+    }
+    var track = document.getElementById("streak-week-track");
+    if (track) {
+      track.innerHTML = "";
+      var slots = getWeekRingSlots(state);
+      for (var si = 0; si < slots.length; si++) {
+        var slot = slots[si];
+        var cell = document.createElement("div");
+        cell.className = "streak-day";
+        cell.setAttribute("role", "listitem");
+        cell.setAttribute("data-kind", slot.kind);
+        if (slot.kind === "done") {
+          cell.innerHTML = '<span class="streak-day-mark" aria-label="Studied">✓</span>';
+        } else if (slot.kind === "missed") {
+          cell.innerHTML = '<span class="streak-day-dot streak-day-dot--miss" aria-hidden="true"></span>';
+        } else if (slot.kind === "today") {
+          cell.innerHTML = '<span class="streak-day-star" aria-label="Today" title="Today">☆</span>';
+        } else {
+          cell.innerHTML = '<span class="streak-day-dot streak-day-dot--future" aria-hidden="true"></span>';
+        }
+        track.appendChild(cell);
+      }
+    }
+    var done = weekCompletedCount(state);
+    var mot = streakWeekMotivation(done);
+    var lead = document.getElementById("streak-week-msg-lead");
+    var hot = document.getElementById("streak-week-msg-hot");
+    if (lead) lead.textContent = mot.lead;
+    if (hot) hot.textContent = mot.hot;
+    var hint =
+      ui.count === 0
+        ? "Study today: rate a card in Study (SRS) or answer a quiz question to start your streak."
+        : ui.atRisk
+          ? ui.count + "-day streak — study today to keep it."
+          : ui.count + "-day streak — come back tomorrow after another session to grow your flame.";
+    widget.setAttribute("title", hint);
+    widget.setAttribute("aria-label", hint);
   }
 
   /* ========== STUDY ENGINE (summaries, chunks, cards, quiz, chunk rank) ========== */
@@ -570,6 +768,10 @@
       .sort(function (a, b) {
         return b.rate - a.rate || b.wrong - a.wrong;
       });
+  }
+
+  function resetWeakTopics(st) {
+    st.weakTopics = {};
   }
 
   /* ========== CHAT (local retrieval + optional OpenAI) ========== */
@@ -1243,8 +1445,15 @@
     if (email) {
       greet.textContent = "Signed in as " + email;
       wrap.hidden = false;
+      wrap.removeAttribute("hidden");
+      renderStreakFlame();
     } else {
       wrap.hidden = true;
+      var sw = $("#streak-widget");
+      if (sw) {
+        sw.hidden = true;
+        sw.setAttribute("hidden", "");
+      }
     }
   }
 
@@ -1345,6 +1554,7 @@
     CURRENT_STATE_KEY = storageKeyForSession(s);
     state = loadState();
     if (!state.docs.length) state = Object.assign(defaultState(), state);
+    if (streakNormalizeIfLapsed(state)) persist();
     migrateFlashcardsIfNeeded();
     patchSectionPromptsOnFlashcards();
     bindUi();
@@ -1355,6 +1565,7 @@
     renderWeakTopics();
     setTab(getLastTab());
     updateSessionHeader();
+    renderStreakFlame();
   }
 
   function onStartContinue() {
@@ -1818,7 +2029,9 @@
     state.srs[item.card.id] = scheduleReview(quality, prev);
     if (quality < 3) recordWeak(state, item.card.topicKey, item.card.topic, 1, 0);
     else recordWeak(state, item.card.topicKey, item.card.topic, 0, 1);
+    applyStreakActivity(state);
     persist();
+    renderStreakFlame();
     srsIndex += 1;
     if (srsIndex >= srsQueue.length) {
       srsQueue = collectDueCards();
@@ -2030,7 +2243,9 @@
       btn.classList.add("wrong");
       recordWeak(state, item.topicKey, null, 1, 0);
     } else recordWeak(state, item.topicKey, null, 0, 1);
+    applyStreakActivity(state);
     persist();
+    renderStreakFlame();
     $("#quiz-feedback").textContent = opt.correct ? "Correct." : "Not quite — green shows the right answer.";
     $("#quiz-next").hidden = false;
     renderWeakTopics();
@@ -2100,7 +2315,11 @@
             setTab(name);
             if (name === "study") startSrsSession();
             if (name === "quiz") refreshSelectors();
-            if (name === "insights") renderWeakTopics();
+            if (name === "insights") {
+              var ws = $("#weak-reset-status");
+              if (ws) ws.textContent = "";
+              renderWeakTopics();
+            }
             if (name === "chat") {
               refreshSelectors();
               syncOpenAiKeyFields();
@@ -2186,6 +2405,29 @@
 
     $("#btn-start-quiz").addEventListener("click", startQuiz);
     $("#quiz-next").addEventListener("click", quizNext);
+
+    var btnResetWeak = $("#btn-reset-weak-topics");
+    if (btnResetWeak) {
+      btnResetWeak.addEventListener("click", function () {
+        var status = $("#weak-reset-status");
+        var rows = weakTopicList(state);
+        if (rows.length === 0) {
+          if (status) status.textContent = "No weak-topic stats to clear yet.";
+          return;
+        }
+        if (
+          !confirm(
+            "Clear all weak-topic statistics from quizzes and SRS? Your notes and card schedules stay the same."
+          )
+        ) {
+          return;
+        }
+        resetWeakTopics(state);
+        persist();
+        renderWeakTopics();
+        if (status) status.textContent = "Weak topic stats cleared.";
+      });
+    }
 
     $("#openai-key").addEventListener("change", function () {
       persistOpenAiKeyFromField($("#openai-key"));

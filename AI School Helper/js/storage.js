@@ -16,6 +16,10 @@ export function defaultState() {
     srs: {}, // per–flashcard-id spaced repetition metadata
     weakTopics: {}, // aggregated wrong/right counts by topic key
     activeDocId: null, // which set is selected in the Library UI
+    /** Daily streak: `count` consecutive days ending at `lastDate` (YYYY-MM-DD local). */
+    streak: { count: 0, lastDate: null },
+    /** Current calendar week (Sunday YYYY-MM-DD) + which weekdays had a study session. */
+    weekRing: { start: null, days: [false, false, false, false, false, false, false] },
   };
 }
 

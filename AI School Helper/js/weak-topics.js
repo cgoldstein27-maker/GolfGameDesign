@@ -30,3 +30,8 @@ export function weakTopicList(state) {
     .filter((x) => x.total > 0)
     .sort((a, b) => b.rate - a.rate || b.wrong - a.wrong);
 }
+
+/** Clear all aggregated miss/hit counts (quiz + SRS). Does not change notes or SRS schedules. */
+export function resetWeakTopics(state) {
+  state.weakTopics = {};
+}

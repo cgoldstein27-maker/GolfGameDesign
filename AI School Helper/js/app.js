@@ -7,10 +7,19 @@
  *   - `study-smart-bundle.js` (no modules; for opening index.html from disk).
  */
 
+import {
+  applyStreakActivity,
+  getStreakUiState,
+  streakNormalizeIfLapsed,
+  syncWeekRingToCalendar,
+  getWeekRingSlots,
+  weekCompletedCount,
+  streakWeekMotivation,
+} from "./streak.js";
 import { loadState, saveState, newId, defaultState, STORAGE_KEY_BASE } from "./storage.js";
 import { buildStudyMaterial, summarize, buildQuiz } from "./study-engine.js";
 import { scheduleReview, defaultSrsMeta, isDue } from "./srs.js";
-import { recordWeak, weakTopicList } from "./weak-topics.js";
+import { recordWeak, resetWeakTopics, weakTopicList } from "./weak-topics.js";
 import {
   answerQuestion,
   generateNotesForTopic,
@@ -237,6 +246,63 @@ function persistLastTab(name) {
   }
 }
 
+function renderStreakFlame() {
+  const widget = $("#streak-widget");
+  if (!widget) return;
+  const s = loadSessionRecord();
+  if (!s?.email?.trim()) {
+    widget.hidden = true;
+    widget.setAttribute("hidden", "");
+    return;
+  }
+  if (syncWeekRingToCalendar(state)) persist();
+  const { count, tier, atRisk } = getStreakUiState(state);
+  widget.hidden = false;
+  widget.removeAttribute("hidden");
+  widget.className = `streak-widget streak-slot streak-tier-${tier}${atRisk ? " streak-at-risk" : ""}`;
+  const countEl = $("#streak-count");
+  const cap = $("#streak-caption");
+  if (countEl) countEl.textContent = String(count);
+  if (cap) {
+    if (count === 0) cap.textContent = "Study today to start!";
+    else if (count === 1) cap.textContent = "day streak!";
+    else cap.textContent = "days streak!";
+  }
+  const track = $("#streak-week-track");
+  if (track) {
+    track.innerHTML = "";
+    for (const slot of getWeekRingSlots(state)) {
+      const cell = document.createElement("div");
+      cell.className = "streak-day";
+      cell.setAttribute("role", "listitem");
+      cell.dataset.kind = slot.kind;
+      if (slot.kind === "done") {
+        cell.innerHTML = '<span class="streak-day-mark" aria-label="Studied">✓</span>';
+      } else if (slot.kind === "missed") {
+        cell.innerHTML = '<span class="streak-day-dot streak-day-dot--miss" aria-hidden="true"></span>';
+      } else if (slot.kind === "today") {
+        cell.innerHTML = '<span class="streak-day-star" aria-label="Today" title="Today">☆</span>';
+      } else {
+        cell.innerHTML = '<span class="streak-day-dot streak-day-dot--future" aria-hidden="true"></span>';
+      }
+      track.appendChild(cell);
+    }
+  }
+  const mot = streakWeekMotivation(weekCompletedCount(state));
+  const lead = $("#streak-week-msg-lead");
+  const hot = $("#streak-week-msg-hot");
+  if (lead) lead.textContent = mot.lead;
+  if (hot) hot.textContent = mot.hot;
+  const hint =
+    count === 0
+      ? "Study today: rate a card in Study (SRS) or answer a quiz question to start your streak."
+      : atRisk
+        ? `${count}-day streak — study today to keep it.`
+        : `${count}-day streak — come back tomorrow after another session to grow your flame.`;
+  widget.setAttribute("title", hint);
+  widget.setAttribute("aria-label", hint);
+}
+
 function updateSessionHeader() {
   const s = loadSessionRecord();
   const wrap = $("#header-session");
@@ -246,8 +312,15 @@ function updateSessionHeader() {
   if (email) {
     greet.textContent = `Signed in as ${email}`;
     wrap.hidden = false;
+    wrap.removeAttribute("hidden");
+    renderStreakFlame();
   } else {
     wrap.hidden = true;
+    const sw = $("#streak-widget");
+    if (sw) {
+      sw.hidden = true;
+      sw.setAttribute("hidden", "");
+    }
   }
 }
 
@@ -567,7 +640,9 @@ function rateSrs(quality) {
   } else {
     recordWeak(state, item.card.topicKey, item.card.topic, 0, 1);
   }
+  applyStreakActivity(state);
   persist();
+  renderStreakFlame();
   srsIndex += 1;
   if (srsIndex >= srsQueue.length) {
     srsQueue = collectDueCards();
@@ -766,7 +841,9 @@ function onQuizPick(btn, item, opt) {
   } else {
     recordWeak(state, item.topicKey, null, 0, 1);
   }
+  applyStreakActivity(state);
   persist();
+  renderStreakFlame();
   $("#quiz-feedback").textContent = opt.correct ? "Correct." : "Not quite — green shows the right answer.";
   $("#quiz-next").hidden = false;
   renderWeakTopics();
@@ -834,7 +911,11 @@ function bindUi() {
       setTab(name);
       if (name === "study") startSrsSession();
       if (name === "quiz") refreshSelectors();
-      if (name === "insights") renderWeakTopics();
+      if (name === "insights") {
+        const ws = $("#weak-reset-status");
+        if (ws) ws.textContent = "";
+        renderWeakTopics();
+      }
       if (name === "chat") {
         refreshSelectors();
         syncOpenAiKeyFields();
@@ -916,6 +997,22 @@ function bindUi() {
 
   $("#btn-start-quiz").addEventListener("click", startQuiz);
   $("#quiz-next").addEventListener("click", quizNext);
+
+  $("#btn-reset-weak-topics")?.addEventListener("click", () => {
+    const status = $("#weak-reset-status");
+    const rows = weakTopicList(state);
+    if (rows.length === 0) {
+      if (status) status.textContent = "No weak-topic stats to clear yet.";
+      return;
+    }
+    if (!confirm("Clear all weak-topic statistics from quizzes and SRS? Your notes and card schedules stay the same.")) {
+      return;
+    }
+    resetWeakTopics(state);
+    persist();
+    renderWeakTopics();
+    if (status) status.textContent = "Weak topic stats cleared.";
+  });
 
   $("#openai-key")?.addEventListener("change", () => persistOpenAiKeyFromField($("#openai-key")));
   $("#openai-api-base")?.addEventListener("change", persistOpenAiBaseFromField);
@@ -1017,6 +1114,7 @@ function initMainApp() {
   currentStateStorageKey = storageKeyForSession(loadSessionRecord());
   state = loadState(currentStateStorageKey);
   if (!state.docs.length) state = { ...defaultState(), ...state };
+  if (streakNormalizeIfLapsed(state)) persist();
   migrateFlashcardsIfNeeded();
   patchSectionPromptsOnFlashcards();
   bindUi();
@@ -1028,6 +1126,7 @@ function initMainApp() {
   renderWeakTopics();
   setTab(getLastTab());
   updateSessionHeader();
+  renderStreakFlame();
 }
 
 async function onStartContinue() {
