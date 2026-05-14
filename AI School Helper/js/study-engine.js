@@ -312,13 +312,14 @@ export function buildStudyMaterial(content, idPrefix) {
 
     const longHeading =
       firstLineFull.length > 44 || c.topic.endsWith("…") || c.topic.endsWith("...");
+    const tq = c.topic.trim();
     const qStem = longHeading
       ? rest.length > 12 || afterLine.length > 12
-        ? "Which detail is spelled out in this part of your notes?"
-        : "Which statement best matches what this part of your notes is about?"
+        ? `Which detail do your notes spell out for “${tq}”?`
+        : `Which statement best matches your notes on “${tq}”?`
       : rest.length > 12 || afterLine.length > 12
-        ? `What does your text say about “${c.topic}”?`
-        : `What is the main idea for “${c.topic}”?`;
+        ? `What does your text say about “${tq}”?`
+        : `What is the main idea for “${tq}”?`;
 
     back = ensureDistinctAnswer(qStem, back, c.text, segments);
 
@@ -406,8 +407,9 @@ export function buildQuiz(cards) {
     }
 
     let question = String(source[i].q || "").trim();
+    const topicLabel = String(source[i].topic || "this set").trim();
     if (quizStemConflictsAnswer(question, correct)) {
-      question = "Which statement matches this idea from your notes?";
+      question = `Which statement matches your notes on “${topicLabel}”?`;
     }
     const cor = (correct || "").trim();
     if (cor.length >= 24) {
@@ -415,7 +417,7 @@ export function buildQuiz(cards) {
       for (let len = Math.min(80, cor.length); len >= 22; len -= 6) {
         const frag = cor.slice(0, len).trim().toLowerCase();
         if (frag.length >= 20 && ql.includes(frag)) {
-          question = "Which option matches what your notes say for this card?";
+          question = `Which option matches what your notes say on “${topicLabel}”?`;
           break;
         }
       }

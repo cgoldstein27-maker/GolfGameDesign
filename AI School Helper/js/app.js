@@ -124,6 +124,37 @@ function migrateFlashcardsIfNeeded() {
   if (changed) persist();
 }
 
+/** Fix saved cards whose prompt said “this part” without naming the section (topic). */
+function patchSectionPromptsOnFlashcards() {
+  let changed = false;
+  for (const doc of state.docs) {
+    for (const fc of doc.flashcards || []) {
+      if (!fc || typeof fc !== "object") continue;
+      const t = String(fc.topic || "").trim();
+      const q = String(fc.q || "");
+      if (!t || !q) continue;
+      if (q.includes(t)) continue;
+      let next = null;
+      if (/Which detail is spelled out in this part of your notes/i.test(q)) {
+        next = `Which detail do your notes spell out for “${t}”?`;
+      } else if (/Which statement best matches what this part of your notes is about/i.test(q)) {
+        next = `Which statement best matches your notes on “${t}”?`;
+      } else if (/Which statement matches this idea from your notes/i.test(q)) {
+        next = `Which statement matches your notes on “${t}”?`;
+      } else if (/Which option matches what your notes say for this card/i.test(q)) {
+        next = `Which option matches what your notes say on “${t}”?`;
+      } else if (/this part of your notes/i.test(q)) {
+        next = `Which detail do your notes spell out for “${t}”?`;
+      }
+      if (next) {
+        fc.q = next;
+        changed = true;
+      }
+    }
+  }
+  if (changed) persist();
+}
+
 const normalizeEmail = (email) => String(email || "").trim().toLowerCase();
 
 function userIdFromEmail(email) {
@@ -987,6 +1018,7 @@ function initMainApp() {
   state = loadState(currentStateStorageKey);
   if (!state.docs.length) state = { ...defaultState(), ...state };
   migrateFlashcardsIfNeeded();
+  patchSectionPromptsOnFlashcards();
   bindUi();
   syncOpenAiKeyFields();
   syncOpenAiBaseField();
