@@ -207,6 +207,56 @@ async function openAiQuizChat(userBlock, systemContent, temperature, apiKey) {
 }
 
 /** Turn model JSON { questions: [...] } into quiz UI items (options shuffled). */
+function normQuizOpt(s) {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function dedupeAiMcOptions(rawOpts, correctIndex) {
+  const o = rawOpts.map((x) => String(x).trim()).filter((s) => s.length > 0);
+  if (o.length < 2) return null;
+  const ci = Math.min(o.length - 1, Math.max(0, Number(correctIndex) || 0));
+  const correctStr = o[ci];
+  const correctNorm = normQuizOpt(correctStr);
+  const seen = new Set();
+  const uniq = [];
+  for (const t of o) {
+    const n = normQuizOpt(t);
+    if (!n || seen.has(n)) continue;
+    seen.add(n);
+    uniq.push(t);
+  }
+  let correctPos = uniq.findIndex((t) => normQuizOpt(t) === correctNorm);
+  if (correctPos < 0) {
+    uniq.unshift(correctStr);
+    correctPos = 0;
+    seen.add(correctNorm);
+  }
+  const PAD = [
+    "Not stated in these notes.",
+    "Only partly supported by the notes.",
+    "Misstates the relationship the notes describe.",
+    "Describes a different case than the notes emphasize.",
+  ];
+  let pi = 0;
+  while (uniq.length < 4) {
+    const p = PAD[pi++ % PAD.length];
+    const pn = normQuizOpt(p);
+    if (!seen.has(pn)) {
+      seen.add(pn);
+      uniq.push(p);
+    }
+    if (pi > 20) break;
+  }
+  const four = uniq.slice(0, 4);
+  correctPos = Math.min(3, four.findIndex((t) => normQuizOpt(t) === correctNorm));
+  if (correctPos < 0) correctPos = 0;
+  const tagged = four.map((text, i) => ({ text, correct: i === correctPos }));
+  return tagged.sort(() => Math.random() - 0.5);
+}
+
 function mapParsedQuestionsToItems(parsed, defaultTopicKey) {
   const qs = parsed?.questions;
   if (!Array.isArray(qs) || qs.length === 0) {
@@ -217,19 +267,14 @@ function mapParsedQuestionsToItems(parsed, defaultTopicKey) {
     if (!q || typeof q !== "object") continue;
     const qText = String(q.question ?? "").trim();
     let opts = Array.isArray(q.options) ? q.options.map((x) => String(x)) : [];
-    opts = opts.filter((s) => s.length > 0).slice(0, 4);
+    opts = opts.filter((s) => s.length > 0);
     if (qText.length < 3 || opts.length < 2) continue;
-    while (opts.length < 4) opts.push("(option)");
-    const idx = Math.min(3, Math.max(0, Number(q.correctIndex) || 0));
+    const deduped = dedupeAiMcOptions(opts, q.correctIndex);
+    if (!deduped) continue;
     const topicKey = typeof q.topicKey === "string" && q.topicKey ? q.topicKey : defaultTopicKey;
-    const tagged = opts.map((text, i) => ({
-      text,
-      correct: i === idx,
-    }));
-    const shuffled = tagged.sort(() => Math.random() - 0.5);
     items.push({
       question: qText,
-      options: shuffled.map(({ text, correct }) => ({ text, correct })),
+      options: deduped,
       topicKey,
     });
   }
