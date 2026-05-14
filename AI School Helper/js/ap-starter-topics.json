@@ -1,5 +1,5 @@
 {
-  "about": "Short starter outlines for practice only. Official AP course and exam descriptions are published by the College Board at apstudents.collegeboard.org.",
+  "about": "Starter outlines for practice only—not official AP exam content. For course frameworks and skills, use the College Board at https://apstudents.collegeboard.org/courses",
   "courses": [
     {
       "id": "apush",
@@ -7,19 +7,27 @@
       "topics": [
         {
           "title": "APUSH — Period 1 (1491–1607)",
-          "content": "Native North American societies before sustained European contact.\n\nKey ideas: diverse cultures, trade networks, agriculture, and political structures adapted to geography. European exploration begins to redraw maps and trade routes.\n\nStudy focus: compare regions (e.g., Southwest vs. Northeast). Know one example of long-distance exchange before Columbus.\n\nCommon mistakes: treating all Indigenous nations as one culture; forgetting environmental context.\n\nExam tip: tie evidence to historical thinking skills—causation, continuity, and change over time."
+          "content": "Overview: Before sustained European settlement, North America hosted diverse societies whose economies, religions, and governments reflected local environments and long-distance networks.\n\nKey ideas: maize-based agriculture in many regions; trade routes linking peoples; kinship, confederacy, and city-based political forms; early European exploration reconfigures Atlantic geography without yet dominating continents.\n\nVocabulary & anchors: long-distance exchange; adaptation; Columbian Exchange (preview—full weight in later periods); primary sources from multiple regions, not only English colonies.\n\nTimeline thread: 1491 baseline → first contact zones → Spanish/French/English probes with different goals (trade vs. settlement vs. extraction).\n\nStudy focus: compare two regions (e.g., Southwest vs. Northeast) on food, labor, and leadership. Name one non-European trade connection that predates Columbus.\n\nCommon mistakes: treating Indigenous North America as a single culture; skipping environmental and gendered labor patterns.\n\nExam tip: practice HIPP-style sourcing and tie claims to historical thinking—causation, continuity/change, comparison."
+        },
+        {
+          "title": "APUSH — Period 2 (1607–1754)",
+          "content": "Overview: European colonies take root; African slavery becomes central to labor in some regions; Native diplomacy and resistance persist; consumer goods and ideas circulate in an emerging Atlantic world.\n\nKey ideas: Chesapeake vs. New England vs. middle colonies; indentured servitude vs. chattel slavery; mercantilism; Great Awakening; wars for empire (Seven Years’ War as hinge).\n\nVocabulary & anchors: Bacon’s Rebellion context; Navigation Acts; Iroquois Confederacy diplomacy; Stono Rebellion (preview of resistance patterns).\n\nStudy focus: explain how labor systems and land policy shaped distinct colonial societies.\n\nCommon mistakes: flattening “colonists” into one ideology; ignoring Native power and legal treaties.\n\nExam tip: compare two colonies using two different categories (economy + religion, or labor + politics)."
         },
         {
           "title": "APUSH — Period 3 (1754–1800)",
-          "content": "Imperial conflict, independence, and building new governments.\n\nKey ideas: French and Indian War aftermath, taxes and protest, Declaration and war, Articles vs. Constitution, first party debates.\n\nStudy focus: explain how debates over sovereignty and rights shaped founding documents.\n\nCommon mistakes: conflating colonial grievances with later Civil War issues.\n\nExam tip: practice thesis statements that use specific evidence from two different colonies or regions."
+          "content": "Overview: Imperial wars and British reforms after 1763 spark colonial protest; independence produces experiments in republican government and debates over who counts as “the people.”\n\nKey ideas: French and Indian War legacies; taxes, boycotts, and committees of correspondence; military strategy and foreign aid; Articles weaknesses; Constitutional compromises; Federalist vs. Anti-Federalist arguments.\n\nVocabulary & anchors: virtual representation; loyalism; Valley Forge; checks and balances; three-fifths compromise (interpret debates, not moralize in one sentence).\n\nStudy focus: trace sovereignty—from Parliament’s claims to “the people” in state constitutions to the federal design.\n\nCommon mistakes: reading the Constitution only as a rights document without powers/federalism.\n\nExam tip: thesis + two concrete evidence chunks from different colonies or groups (e.g., artisans vs. planters)."
         },
         {
           "title": "APUSH — Period 4 (1800–1848)",
-          "content": "Expansion, market revolution, and reform.\n\nKey ideas: territorial growth, transportation, labor systems, sectional tensions, abolition and women’s rights movements.\n\nStudy focus: connect economic change to social and political consequences.\n\nCommon mistakes: oversimplifying “North vs. South” before 1850.\n\nExam tip: use one reform movement as a case study for continuity vs. change."
+          "content": "Overview: The new republic expands territorially and commercially; market revolution transforms work; reformers target slavery, prisons, education, and women’s roles—often in tension with each other.\n\nKey ideas: Louisiana Purchase; transportation revolution; cotton and enslaved labor; Second Great Awakening; abolitionism; early women’s rights (Seneca Falls as capstone example).\n\nVocabulary & anchors: Missouri Compromise; Monroe Doctrine (motives vs. myth); nativism seeds; Lowell mills as gendered labor.\n\nStudy focus: connect market growth to sectional stress—how does western expansion embed slavery’s politics?\n\nCommon mistakes: “North good / South bad” caricature before 1850; ignoring free Black communities and organizing.\n\nExam tip: one reform movement as continuity/change case study with limits of reform."
         },
         {
           "title": "APUSH — Period 7 (1890–1945)",
-          "content": "Industrial America, empire, Progressivism, world wars, and New Deal.\n\nKey ideas: immigration, labor unions, Populism/Progressivism, WWI home front, Great Depression responses, WWII mobilization.\n\nStudy focus: compare Progressive goals with outcomes; link foreign policy shifts to domestic debates.\n\nCommon mistakes: listing programs without explaining purpose or constraint.\n\nExam tip: LEQ practice—evaluate continuity in federal power across two eras."
+          "content": "Overview: Industrial scale, empire, migration, and two world wars recast the federal government’s role and Americans’ everyday lives—from factory floors to trenches to breadlines to assembly lines again.\n\nKey ideas: Populism and Progressivism targets; Jim Crow and Great Migration; WWI mobilization and Red Summer context; New Deal alphabet agencies; WWII home front and internment; beginnings of modern foreign policy institutions.\n\nVocabulary & anchors: Sherman Antitrust Act usage; Square Deal vs. New Deal; lend-lease; Double V campaign.\n\nStudy focus: compare Progressive reform goals with measurable outcomes; link foreign crises to domestic dissent or consensus.\n\nCommon mistakes: listing New Deal programs without goals/constraints; treating WWII as only European theater.\n\nExam tip: LEQ on federal power—pick two eras and evaluate change vs. continuity with evidence."
+        },
+        {
+          "title": "APUSH — Period 8 (1945–1980)",
+          "content": "Overview: Cold War, civil rights struggles, suburbanization, and rights expansions redefine citizenship; economic growth and stagflation reshape expectations of government and work.\n\nKey ideas: containment; Korean and Vietnam wars; Brown and civil rights coalitions; Great Society; second-wave feminism; environmentalism; détente and oil shocks.\n\nVocabulary & anchors: GI Bill; Fair Deal vs. New Frontier vs. Great Society; EPA founding context.\n\nStudy focus: connect foreign policy commitments to domestic protest or compliance.\n\nCommon mistakes: treating “the Sixties” as only youth culture; skipping conservative and religious mobilizations.\n\nExam tip: DBQ practice—sort docs by author, audience, purpose before thesis."
         }
       ]
     },
@@ -29,15 +37,37 @@
       "topics": [
         {
           "title": "AP World — Renaissance & global encounters",
-          "content": "Intellectual and artistic renewal in Europe alongside expanding maritime exploration.\n\nKey ideas: humanism, printing, patronage; Iberian navigation; early Atlantic exchanges.\n\nStudy focus: connect cultural change to economic and political elites.\n\nCommon mistakes: treating Renaissance as purely “rebirth of Greece/Rome” with no social context.\n\nExam tip: compare one European development with a contemporaneous Asian state-building example."
+          "content": "Overview: European states and elites fund art, science, and navigation while gunpowder empires and Asian trade hubs remain powerful centers—global contact intensifies but is not yet European-dominated everywhere.\n\nKey ideas: humanism and patronage; printing press diffusion; Iberian Atlantic missions and conquest; African kingdoms and trade; Ming/Qing policies toward maritime trade.\n\nVocabulary & anchors: joint-stock companies (early); mestizo societies; syncretism in religion.\n\nStudy focus: pair one European cultural shift with one non-European state-building or trade policy from the same century.\n\nCommon mistakes: Renaissance as apolitical “rebirth”; ignoring African and Indigenous agency in Atlantic systems.\n\nExam tip: comparison thesis with one similarity and one difference anchored in evidence."
+        },
+        {
+          "title": "AP World — Global trade (1450–1750)",
+          "content": "Overview: Silver from the Americas funds Asian economies; Indian Ocean and trans-Saharan networks persist; Atlantic slave trade expands coerced migration that reshapes labor in the Americas.\n\nKey ideas: Manila galleons; mercantilist competition; chartered monopolies; plantation complexes; demographic catastrophe and resistance in the Americas.\n\nVocabulary & anchors: middle passage; asiento system (context); encomienda vs. hacienda (compare carefully).\n\nStudy focus: write a causation paragraph: American silver → spending in China/Europe → one political effect.\n\nCommon mistakes: treating “globalization” as only technology; skipping environmental costs of mining and sugar.\n\nExam tip: map one commodity chain across three regions with dates."
         },
         {
           "title": "AP World — Industrialization & imperialism",
-          "content": "Steam power, factories, and global competition reshape labor, trade, and empire.\n\nKey ideas: demographic shifts, reform responses, technologies of rule, resistance.\n\nStudy focus: link industrial demand to colonial extraction and infrastructure.\n\nCommon mistakes: assuming imperialism was only “European vs. everyone else.”\n\nExam tip: causation chain—one resource, one technology, one political outcome."
+          "content": "Overview: Coal, steam, and later steel reorder production, time, and urban life; empires justify extraction with racial ideology while colonized peoples adapt, resist, and reform.\n\nKey ideas: second industrial revolution markers; labor unions and reform laws; technologies of rule (railways, telegraphs); Indian National Congress–era claims; Ethiopian resistance as counterexample.\n\nVocabulary & anchors: Berlin Conference (Africa scramble context); concessions in China; Young Turks as reform nationalism example.\n\nStudy focus: link factory demand to one colonial commodity and one local response.\n\nCommon mistakes: imperialism as only “Europe vs. world”; ignoring Japanese Meiji industrial state.\n\nExam tip: causation chain—resource + technology + political outcome—with dates."
         },
         {
           "title": "AP World — 1914–present (war, peace, globalization)",
-          "content": "World wars, decolonization, Cold War, and institutions of global interdependence.\n\nKey ideas: self-determination, superpower rivalry, international organizations, migration, human rights language.\n\nStudy focus: compare post-1945 economic orders in two regions.\n\nCommon mistakes: Cold War as only nuclear crisis—include economics and proxy conflicts.\n\nExam tip: document-based reasoning—group sources by perspective before thesis."
+          "content": "Overview: Total war, self-determination rhetoric, decolonization, Cold War bipolarity, and post-1989 institutions create today’s dense migration, finance, and rights language—often contested.\n\nKey ideas: League vs. UN ambitions; decolonization timelines; non-aligned movement; Bretton Woods basics; human rights covenants vs. sovereignty claims; climate and health as global commons problems.\n\nVocabulary & anchors: apartheid; proxy wars; neoliberalism (define carefully in your own words); ASEAN-style regionalism (example).\n\nStudy focus: compare post-1945 economic integration in two world regions.\n\nCommon mistakes: Cold War reduced to nukes only; skipping economic Cold War (oil, debt).\n\nExam tip: group DBQ sources by perspective before thesis; practice one counterargument paragraph."
+        }
+      ]
+    },
+    {
+      "id": "apeuro",
+      "name": "AP European History (themes)",
+      "topics": [
+        {
+          "title": "AP Euro — Renaissance & reformations",
+          "content": "Overview: City-states and print culture spread new humanist curricula; religious reform splits Latin Christendom into competing confessions that reshape politics and daily life.\n\nKey ideas: Italian vs. Northern Renaissance emphases; Lutheran, Calvinist, and Catholic Reform paths; wars of religion as state-building catalysts.\n\nVocabulary & anchors: indulgence debate; Peace of Augsburg; politiques (conceptual label).\n\nStudy focus: compare one artistic patronage goal with one reformer’s educational goal.\n\nCommon mistakes: treating Protestantism as monolithic; ignoring Catholic reform energy.\n\nExam tip: LEQ—change in political authority tied to religious identity with two states."
+        },
+        {
+          "title": "AP Euro — Scientific Revolution & Enlightenment",
+          "content": "Overview: New methods (mathematics, observation, institutions) challenge Aristotelian cosmos; salons and encyclopedias spread critical ideas that collide with absolutist courts.\n\nKey ideas: heliocentrism controversy; Bacon/Descartes methods; separation of powers and social contract language; enlightened absolutism as hybrid.\n\nVocabulary & anchors: Royal academies; philosophes; censorship vs. underground circulation.\n\nStudy focus: connect one scientific claim to one political pamphlet argument of the 1700s.\n\nCommon mistakes: “science replaced religion” oversimplification; skipping women’s roles in salons and science.\n\nExam tip: practice attributing ideas to named thinkers without anachronism."
+        },
+        {
+          "title": "AP Euro — Industrial society & mass politics",
+          "content": "Overview: Factories, unions, suffrage expansions, and nationalism turn subjects into citizens—while imperial competition and World War I break old diplomatic assumptions.\n\nKey ideas: British reform acts; socialist and anarchist currents; Realpolitik; alliance system failures; wartime total mobilization.\n\nVocabulary & anchors: Zollverein (German customs context); Chartism; February/October revolutions (sketch causes).\n\nStudy focus: explain how one reform narrowed or widened the electorate and who resisted.\n\nCommon mistakes: industrialization as only Britain; ignoring peasant politics east of Elbe.\n\nExam tip: causation paragraph from economic change to one party outcome."
         }
       ]
     },
@@ -47,15 +77,19 @@
       "topics": [
         {
           "title": "AP Gov — Constitutional principles",
-          "content": "Founding debates, separation of powers, checks and balances, federalism.\n\nKey ideas: enumerated vs. reserved powers; elastic clause debates; Bill of Rights as limits on national power.\n\nStudy focus: apply a scenario: which branch checks which, and why?\n\nCommon mistakes: mixing up Articles of Confederation problems with later federalism disputes.\n\nExam tip: define terms precisely (e.g., devolution, mandate, commerce power)."
+          "content": "Overview: The Constitution emerges from compromise over power—who can tax, regulate commerce, enforce laws, and amend the frame—while Federalist essays defend a workable but still contested design.\n\nKey ideas: enumerated vs. implied vs. reserved powers; checks in appointments, vetoes, and judicial review practice; federalism as contested balance, not a fixed ratio.\n\nVocabulary & anchors: elastic clause; supremacy clause; anti-federalist fears; Marbury as precedent story (rule of law vs. politics).\n\nStudy focus: apply a school-policy scenario: which two branches check each other and through which article/section logic?\n\nCommon mistakes: Articles of Confederation weaknesses mixed up with later federalism fights.\n\nExam tip: define devolution, mandate, and commerce power crisply; use at least one court case name correctly."
         },
         {
           "title": "AP Gov — Civil liberties & civil rights",
-          "content": "Bill of Rights incorporation, selective incorporation, equal protection, landmark cases.\n\nKey ideas: speech/religion/assembly limits; due process; disparate impact vs. intent.\n\nStudy focus: compare two amendments used in similar fact patterns.\n\nCommon mistakes: using “civil liberties” and “civil rights” interchangeably.\n\nExam tip: SCOTUS reasoning—majority concern vs. dissent concern in one case."
+          "content": "Overview: Rights talk expands from Bill of Rights limits on national power to incorporation against states and to equality claims tested in courts, Congress, and movements.\n\nKey ideas: selective incorporation timeline; speech time/place/manner; establishment tests (overview level); equal protection tiers; disparate impact vs. discriminatory intent.\n\nVocabulary & anchors: Gitlow gateway; strict scrutiny vs. rational basis; Civil Rights Act titles (big-picture).\n\nStudy focus: compare two amendments used in similar fact patterns (e.g., speech vs. assembly).\n\nCommon mistakes: civil liberties vs. civil rights used interchangeably.\n\nExam tip: one case—state majority’s core worry vs. dissent’s worry in plain English."
         },
         {
           "title": "AP Gov — Elections, parties, & media",
-          "content": "Linkage institutions, nomination processes, campaign finance, polarization, news consumption.\n\nKey ideas: primaries vs. caucuses; PACs/Super PACs; agenda setting and framing.\n\nStudy focus: explain how a rule change shifts who wins nominations.\n\nCommon mistakes: claiming parties are identical; ignoring state-level variation.\n\nExam tip: free-response—use a real mechanism (e.g., electoral college) not vague “people vote.”"
+          "content": "Overview: Linkage institutions translate public opinion into nominees and policy agendas—unevenly—while money, rules, and media frames tilt who is seen as “electable.”\n\nKey ideas: primary types; delegate math basics; FECA/BCRA themes; Super PAC independence (legal vs. practical); polarization measures; agenda setting vs. framing.\n\nVocabulary & anchors: coattails; safe seats; motor voter; selective exposure online.\n\nStudy focus: how would a shift from caucuses to primaries change candidate incentives?\n\nCommon mistakes: “both parties identical”; ignoring state law variation.\n\nExam tip: FRQ—name a mechanism (e.g., electoral college) not vague “people vote.”"
+        },
+        {
+          "title": "AP Gov — Bureaucracy & public policy",
+          "content": "Overview: Congress writes vague statutes; agencies fill details through rulemaking; courts and Congress push back—policy outcomes depend on discretion, oversight, and iron triangles or issue networks.\n\nKey ideas: rulemaking notice-and-comment; discretionary authority; oversight tools (hearings, GAO, appropriations); policy types (distributive/redistributive/regulatory).\n\nVocabulary & anchors: iron triangle vs. issue network; discretionary vs. mandatory spending (intro).\n\nStudy focus: trace one clean air or education policy from statute → agency rule → compliance challenge.\n\nCommon mistakes: bureaucracy as only “waste”—ignore implementation realities.\n\nExam tip: use a policy cycle label (agenda → formulation → implementation) in one sentence."
         }
       ]
     },
@@ -65,33 +99,55 @@
       "topics": [
         {
           "title": "AP Bio — Chemistry of life & cells",
-          "content": "Water properties, carbon chemistry, macromolecules, enzyme basics, membrane structure and transport.\n\nKey ideas: structure–function; competitive vs. noncompetitive inhibition; passive vs. active transport.\n\nStudy focus: explain how surface area/volume ratio matters for cell size.\n\nCommon mistakes: confusing hypertonic/hypotonic direction of water movement.\n\nExam tip: draw quick sketches for osmosis in animal vs. plant cells."
+          "content": "Overview: Life’s chemistry depends on water’s hydrogen bonding, carbon’s versatility, and polymers built from monomers; cells compartmentalize reactions and exchange matter with surroundings.\n\nKey ideas: cohesion/adhesion/high specific heat; dehydration synthesis vs. hydrolysis; protein folding and enzyme active sites; competitive vs. noncompetitive inhibition; fluid mosaic membrane; passive vs. active transport; endocytosis/exocytosis.\n\nVocabulary & anchors: denaturation; saturation kinetics intuition; aquaporins; Na/K pump as primary active transport example.\n\nStudy focus: explain surface area-to-volume ratio as a limit on cell size with one calculation idea (qualitative).\n\nCommon mistakes: hypertonic/hypotonic direction of water; confusing channel and carrier proteins.\n\nExam tip: label cytosol vs. extracellular on osmosis sketches for plant and animal cells."
         },
         {
           "title": "AP Bio — Cell energetics",
-          "content": "Photosynthesis and cellular respiration as coupled pathways of energy flow.\n\nKey ideas: ATP, redox, glycolysis, Krebs, ETC; light reactions vs. Calvin cycle.\n\nStudy focus: track carbons and electron carriers at a big-picture level.\n\nCommon mistakes: saying “plants only do photosynthesis” without noting they respire too.\n\nExam tip: compare aerobic vs. anaerobic outcomes in muscle vs. yeast contexts."
+          "content": "Overview: Photosynthesis traps light energy in chemical bonds; cellular respiration releases that energy in controlled steps to make ATP—organisms often link the two through shared molecules (O₂, CO₂, glucose).\n\nKey ideas: redox in NAD⁺/NADH and FAD/FADH₂; glycolysis location and net; pyruvate oxidation; Krebs outputs; ETC chemiosmosis; light reactions vs. Calvin cycle; photorespiration as tradeoff mention.\n\nVocabulary & anchors: oxidative phosphorylation; cyclic vs. linear electron flow (big-picture); anaerobic fermentation products.\n\nStudy focus: track carbon skeleton count at high level (glucose → pyruvate → acetyl-CoA).\n\nCommon mistakes: plants don’t respire; “energy stored in ATP bonds” sloppy phrasing—prefer phosphorylation potential.\n\nExam tip: compare lactate fermentation vs. ethanol fermentation contexts (muscle vs. yeast)."
         },
         {
           "title": "AP Bio — Heredity & gene expression",
-          "content": "Mendelian patterns, extensions, linkage, DNA replication, transcription, translation, regulation.\n\nKey ideas: probability with Punnett squares; central dogma; operons as simple regulation models.\n\nStudy focus: predict phenotypes with incomplete dominance or codominance.\n\nCommon mistakes: mixing replication enzymes with transcription enzymes.\n\nExam tip: Chi-square vocabulary—null hypothesis, degrees of freedom, “fail to reject.”"
+          "content": "Overview: Mendelian rules describe idealized inheritance; linkage and crossing over complicate them; DNA replication preserves sequence; expression converts DNA to RNA to protein with multiple regulation points.\n\nKey ideas: probability rules; incomplete dominance vs. codominance; testcross logic; semiconservative replication; leading/lagging strands; transcription factors; operon logic; mutations vs. chromosomal changes (intro).\n\nVocabulary & anchors: heterozygote advantage; Chi-square “fail to reject null”; wobble (name only).\n\nStudy focus: Punnett + probability for two genes (with and without linkage language).\n\nCommon mistakes: DNA pol vs. RNA pol roles; mixing translation elongation factors with replication clamps.\n\nExam tip: write hypotheses and df for Chi-square in one line before calculating."
+        },
+        {
+          "title": "AP Bio — Natural selection & evolution",
+          "content": "Overview: Populations change when heritable variation interacts with environment; Hardy–Weinberg models a null of no evolution; speciation mechanisms connect genetics to lineage splitting.\n\nKey ideas: variation, selection, inheritance, time; directional/disruptive/stabilizing selection; gene flow vs. genetic drift; allopatric vs. sympatric speciation sketches.\n\nVocabulary & anchors: fitness; bottleneck; founder effect; reproductive isolation types (pre/post zygotic).\n\nStudy focus: explain antibiotic resistance as evolution in days–years scale.\n\nCommon mistakes: “individual evolved”; Lamarck language sneaking in.\n\nExam tip: when using H–W, state assumptions explicitly (no selection, random mating, etc.)."
         }
       ]
     },
     {
       "id": "apecon",
-      "name": "AP Microeconomics (basics)",
+      "name": "AP Microeconomics",
       "topics": [
         {
           "title": "AP Micro — Supply, demand, & elasticity",
-          "content": "Law of demand, law of supply, equilibrium, consumer/producer surplus, price controls.\n\nKey ideas: determinants of demand vs. quantity demanded; elasticity along a curve vs. shifts.\n\nStudy focus: show deadweight loss from a binding price ceiling.\n\nCommon mistakes: drawing supply/demand shifts without explaining which curve moves and why.\n\nExam tip: label axes and equilibrium clearly before writing paragraphs."
+          "content": "Overview: Prices coordinate decentralized choices; elasticities summarize responsiveness and predict tax incidence and revenue effects.\n\nKey ideas: law of demand vs. inferior/Giffen exceptions (name only); shifts vs. movements; consumer/producer surplus; price floors/ceilings and deadweight loss; elasticity along linear demand intuition.\n\nVocabulary & anchors: normal vs. inferior good; total revenue test; binding vs. non-binding price control.\n\nStudy focus: draw binding ceiling with shortage and DWL narrative.\n\nCommon mistakes: shifting both curves without story; mixing up elasticity of demand vs. supply.\n\nExam tip: always label axes (P vertical, Q horizontal) and mark old vs. new equilibrium."
         },
         {
           "title": "AP Micro — Market structures",
-          "content": "Perfect competition, monopoly, monopolistic competition, oligopoly.\n\nKey ideas: MR=MC rule; barriers to entry; game theory intuition for oligopoly.\n\nStudy focus: compare long-run profits across structures.\n\nCommon mistakes: calling any firm with branding a monopoly.\n\nExam tip: use a table—# firms, product type, entry, long-run profit."
+          "content": "Overview: Number of firms, product differentiation, and entry barriers shape pricing power and long-run profit possibilities.\n\nKey ideas: MR = MC profit max; P vs. MR in monopoly; zero economic profit in monopolistic competition long run; game theory payoff intuition in duopoly.\n\nVocabulary & anchors: price discrimination conditions; Nash equilibrium (definition); contestable markets (intro).\n\nStudy focus: table comparing perfect competition, mono comp, oligopoly, monopoly on firms, product, entry, long-run profit.\n\nCommon mistakes: branding alone = monopoly; forgetting average total cost in profit rectangles.\n\nExam tip: show shutdown point (P < AVC) on firm graph when relevant."
         },
         {
           "title": "AP Micro — Externalities & public goods",
-          "content": "When private markets miss social costs or benefits, policy tools try to realign incentives.\n\nKey ideas: negative vs. positive externalities; MSC/MPC curves; Pigouvian taxes/subsidies; non-rivalry and non-excludability.\n\nStudy focus: show deadweight loss from overproduction of a good with a negative externality.\n\nCommon mistakes: confusing external costs with “bad taste” or low demand.\n\nExam tip: label private vs. social curves and the efficient quantity on one diagram."
+          "content": "Overview: Private marginal cost can diverge from social marginal cost; policy tries to internalize externalities or fund non-excludable goods.\n\nKey ideas: MSC/MPC graph; Pigouvian tax/subsidy intuition; Coase theorem conditions (low transaction costs, clear rights); public goods free-rider problem.\n\nVocabulary & anchors: tragedy of the commons (resource vs. public good distinction).\n\nStudy focus: one graph with efficient vs. market quantity for negative externality.\n\nCommon mistakes: calling any dislike an externality—need third-party effect.\n\nExam tip: label deadweight loss triangle between MSC and MB at market Q."
+        }
+      ]
+    },
+    {
+      "id": "apmacro",
+      "name": "AP Macroeconomics",
+      "topics": [
+        {
+          "title": "AP Macro — GDP, inflation, & unemployment",
+          "content": "Overview: National income accounting aggregates production and income; price level changes complicate comparisons; unemployment types help diagnose the business cycle.\n\nKey ideas: expenditure approach components; real vs. nominal GDP; CPI vs. GDP deflator (uses); frictional/structural/cyclical unemployment; Okun’s law intuition.\n\nVocabulary & anchors: underground economy limits; seasonal adjustment (name only); labor force participation.\n\nStudy focus: explain why rising GDP can coexist with rising unemployment briefly (composition/timing).\n\nCommon mistakes: treating CPI as cost of living perfectly; confusing unemployment rate numerator/denominator.\n\nExam tip: define every ratio before plugging numbers on FRQs."
+        },
+        {
+          "title": "AP Macro — AD–AS & fiscal policy",
+          "content": "Overview: Aggregate demand and short/long-run aggregate supply frame recessions and inflation; fiscal stabilizers and discretionary policy shift AD with lags and debt tradeoffs.\n\nKey ideas: wealth, interest-rate, and exchange-rate effects on AD; SRAS shocks (supply shocks); stagflation story; multiplier intuition; crowding out.\n\nVocabulary & anchors: automatic stabilizers; contractionary vs. expansionary policy; built-in stabilizers.\n\nStudy focus: draw recessionary gap and one policy closure with LRAS anchor.\n\nCommon mistakes: moving LRAS for every demand shock; forgetting price level axis.\n\nExam tip: narrate step-by-step what happens to r, I, and NX if not holding everything constant—pick one channel."
+        },
+        {
+          "title": "AP Macro — Money, banking, & monetary policy",
+          "content": "Overview: Money functions and fractional reserve banking link to money multiplier intuition; central bank tools aim at interest rates and credit conditions to steer AD.\n\nKey ideas: M1/M2 ideas; balance sheet basics for banks; open market operations; discount rate; reserve requirements; Taylor rule (high level); quantitative easing as nontraditional tool name.\n\nVocabulary & anchors: liquidity trap (concept); federal funds rate as target.\n\nStudy focus: show how bond purchase increases reserves and lowers interest rates in a simple chain.\n\nCommon mistakes: saying “print money” for every expansion; mixing real and nominal rates.\n\nExam tip: distinguish loanable funds vs. liquidity preference stories when a prompt specifies the market."
         }
       ]
     },
@@ -101,15 +157,19 @@
       "topics": [
         {
           "title": "APHG — Thinking geographically",
-          "content": "Maps, scales, projections, diffusion, and how geographers ask “why there?”\n\nKey ideas: absolute vs. relative location; formal/functional/perceptual regions; distance-decay and time-space compression.\n\nStudy focus: compare two types of map distortion for the same world region.\n\nCommon mistakes: treating GPS dots as the same thing as cultural regions.\n\nExam tip: use one real-world example of relocation diffusion vs. expansion diffusion."
+          "content": "Overview: Geographers combine spatial data, scales, and human decision-making to explain patterns like clustering, diffusion barriers, and perceived regions.\n\nKey ideas: scale of analysis; map projections and distortion tradeoffs; GPS/GIS vs. mental maps; formal/functional/perceptual regions; expansion/relocation diffusion; distance-decay; time-space compression.\n\nVocabulary & anchors: choropleth vs. dot density (when each misleads); sustainability frames (intro).\n\nStudy focus: pick one world region—compare distortion on Mercator vs. equal-area projection qualitatively.\n\nCommon mistakes: GPS point = cultural region; correlation as proof of cause.\n\nExam tip: name diffusion type + one real example (language, disease, tech) with direction."
         },
         {
           "title": "APHG — Population & migration",
-          "content": "Demographic transition, push/pull factors, refugee patterns, policies at borders.\n\nKey ideas: crude rates, dependency ratio, guest workers, brain drain/brain gain.\n\nStudy focus: explain one policy that raises or lowers labor inflows.\n\nCommon mistakes: assuming all migration is permanent or voluntary.\n\nExam tip: chain reasoning—economic change → incentive → migration stream."
+          "content": "Overview: Demographic transition model links development to birth/death rates; migration theories add networks, policies, and stage-specific gender patterns.\n\nKey ideas: push/pull; step migration; refugee vs. asylum distinctions (intro); guest worker programs; brain drain/gain; dependency ratio implications.\n\nVocabulary & anchors: Malthusian legacy vs. Boserup counteremphasis (high level); anti-natal policies.\n\nStudy focus: one policy change → expected effect on labor inflow/outflow with mechanism.\n\nCommon mistakes: all migration permanent; ignoring forced migration categories.\n\nExam tip: chain: economic shock → incentive change → migration stream; add one counterflow if relevant."
         },
         {
           "title": "APHG — Cities & urban land use",
-          "content": "Models of urban structure, bid rent, suburbanization, and challenges of rapid growth.\n\nKey ideas: CBD, sector vs. multiple nuclei; squatter settlements; gentrification debates.\n\nStudy focus: apply bid-rent logic to why retail vs. housing ring the core differently.\n\nCommon mistakes: forcing every real city to fit one classic ring model.\n\nExam tip: pair a model prediction with one counterexample from a named world city."
+          "content": "Overview: Land rent, transport costs, and zoning produce rings, sectors, or multiple nuclei; rapid urbanization creates informal housing and infrastructure stress.\n\nKey ideas: bid-rent curve; CBD functions; gentrification drivers; squatter settlements; edge cities.\n\nVocabulary & anchors: primate city; rank-size rule (when it fails); food deserts as accessibility issue.\n\nStudy focus: explain why retail bids more near core than single-family housing in classic models.\n\nCommon mistakes: forcing every metro into concentric rings.\n\nExam tip: pair one model prediction with a real city counterexample."
+        },
+        {
+          "title": "APHG — Political geography",
+          "content": "Overview: States claim sovereignty over territory; boundaries and supranational organizations complicate control; ethnic geography intersects with electoral and conflict maps.\n\nKey ideas: nation vs. state vs. nation-state; boundaries (antecedent/relict etc. at intro); devolution; supranationalism (EU as example); gerrymandering basics.\n\nVocabulary & anchors: chokepoints; EEZ concept; shatterbelt regions (name + caution).\n\nStudy focus: explain one devolution pressure (economic, ethnic, or logistical) with example region.\n\nCommon mistakes: equating ethnicity with automatic separatism.\n\nExam tip: use maps mentally—describe a spatial pattern before explaining process."
         }
       ]
     },
@@ -119,15 +179,19 @@
       "topics": [
         {
           "title": "AP Psych — Research methods & ethics",
-          "content": "How psychologists design studies, measure variables, and protect participants.\n\nKey ideas: IV/DV, operational definitions, random assignment, confounds, informed consent/debriefing.\n\nStudy focus: decide whether a headline supports causation or only correlation.\n\nCommon mistakes: saying “prove” from a single survey.\n\nExam tip: name one threat to internal validity and how randomization reduces it."
+          "content": "Overview: Empirical psychology tests claims with designs that trade internal/external validity; ethics codes add consent, risk/benefit, and debrief norms.\n\nKey ideas: IV/DV, operational definitions, confounds; experimental vs. correlational vs. quasi-experimental; random assignment; statistics vocabulary at descriptive level; IRB role (intro).\n\nVocabulary & anchors: placebo; double-blind; demand characteristics; replication crisis awareness (nuanced one sentence).\n\nStudy focus: given a headline, argue correlation vs. causation with what extra evidence would be needed.\n\nCommon mistakes: “prove” from one study; p-hacking mention without understanding—keep to “need replication.”\n\nExam tip: name one internal validity threat and tie a control to it."
         },
         {
           "title": "AP Psych — Biological bases of behavior",
-          "content": "Neurons, neurotransmitters, brain regions, endocrine system, genetics.\n\nKey ideas: action potential basics; agonists vs. antagonists; plasticity after injury or practice.\n\nStudy focus: map one behavior to two levels of analysis (e.g., neural + cognitive).\n\nCommon mistakes: localizing complex traits to a single “spot” in the brain.\n\nExam tip: use split-brain or hemispheric examples only with correct task wording."
+          "content": "Overview: Neurons communicate chemically and electrically; brain systems specialize but interact; endocrine slow broadcast modulates arousal and metabolism.\n\nKey ideas: action potential phases; synapse; excitatory vs. inhibitory; agonist/antagonist; major lobes; split-brain tasks; plasticity.\n\nVocabulary & anchors: refractory period; neuroplasticity after stroke; HPA axis stress pathway (sketch).\n\nStudy focus: map sleep deprivation to two levels (e.g., attention behavior + autonomic signs).\n\nCommon mistakes: one-to-one phrenology-style mapping.\n\nExam tip: label diagrams left/right hemisphere functions carefully."
         },
         {
           "title": "AP Psych — Learning & memory",
-          "content": "Classical and operant conditioning, observational learning, encoding/storage/retrieval.\n\nKey ideas: acquisition/extinction/spontaneous recovery; schedules of reinforcement; shallow vs. deep processing.\n\nStudy focus: label UCS/UCR/CS/CR in a novel scenario.\n\nCommon mistakes: mixing negative reinforcement with punishment.\n\nExam tip: define terms in your own words before applying them to a vignette."
+          "content": "Overview: Conditioning shapes voluntary and involuntary associations; memory has stages with encoding strategies and known failure modes.\n\nKey ideas: classical conditioning phases; operant schedules partial reinforcement extinction; observational learning; encoding specificity; interference; reconstructive memory.\n\nVocabulary & anchors: latent learning; spacing effect; misinformation effect (name).\n\nStudy focus: novel vignette—label UCS/UCR/CS/CR cleanly.\n\nCommon mistakes: negative reinforcement vs. punishment; proactive vs. retroactive interference flipped.\n\nExam tip: define term then apply—two sentences minimum per FRQ bullet."
+        },
+        {
+          "title": "AP Psych — Social cognition & personality",
+          "content": "Overview: People infer causes for behavior; attitudes predict behavior weakly unless situational pressures dominate; trait and social-cognitive theories organize individual differences.\n\nKey ideas: fundamental attribution error; cognitive dissonance; conformity vs. obedience studies (ethics awareness); Big Five at intro level; locus of control.\n\nVocabulary & anchors: self-serving bias; stereotype threat (define carefully).\n\nStudy focus: identify situational vs. dispositional attribution in a short scenario.\n\nCommon mistakes: Milgram as “proving evil”—discuss obedience to authority nuance.\n\nExam tip: link one classic study to ethical upgrades in modern codes."
         }
       ]
     },
@@ -137,15 +201,19 @@
       "topics": [
         {
           "title": "AP Precalc — Functions & transformations",
-          "content": "Parent functions, shifts, stretches, compositions, and inverse ideas.\n\nKey ideas: domain/range after transformations; even/odd symmetry; one-to-one tests for inverses.\n\nStudy focus: write the equation of a transformed graph from a description.\n\nCommon mistakes: horizontal shifts with opposite sign confusion.\n\nExam tip: check inverses by composition f(f⁻¹(x)) on paper for one simple case."
+          "content": "Overview: Functions model dependence; transformations let you build families from parent graphs; piecewise and composition appear in modeling.\n\nKey ideas: domain/range after shifts/scales; even/odd tests; inverse existence (horizontal line test); composition domain restrictions.\n\nVocabulary & anchors: asymptotic behavior; end behavior; average rate of change vs. instantaneous preview.\n\nStudy focus: write equation for transformed quadratic/exponential from verbal description.\n\nCommon mistakes: horizontal shift sign; reflecting about y = x vs. y-axis confusion.\n\nExam tip: verify inverse with f(f⁻¹(x)) = x on one numeric check."
         },
         {
           "title": "AP Precalc — Trigonometry & models",
-          "content": "Unit circle, radians, graphs of sine/cosine, identities at an introductory level, simple harmonic motion.\n\nKey ideas: period, amplitude, phase shift; solving triangles with law of sines/cosines.\n\nStudy focus: build a sinusoidal model from amplitude, midline, and period data.\n\nCommon mistakes: mixing degrees and radians in the same equation.\n\nExam tip: draw a quick unit-circle diagram before evaluating special angles."
+          "content": "Overview: The unit circle unifies radians, coordinates, and periodic phenomena; sinusoidal models capture cycles in data.\n\nKey ideas: sine/cosine graphs; amplitude, midline, period, phase shift; inverse trig domains; law of sines/cosines selection rules.\n\nVocabulary & anchors: angular frequency; simple harmonic motion as sinusoid.\n\nStudy focus: fit A, B, C, D in Asin(B(x−C))+D from graph features.\n\nCommon mistakes: degree/radian mix; arcsin vs. arccos range.\n\nExam tip: draw reference triangle before evaluating at non-special angles if allowed."
         },
         {
           "title": "AP Precalc — Sequences & exponential change",
-          "content": "Arithmetic vs. geometric sequences, partial sums, discrete vs. continuous growth models.\n\nKey ideas: common difference/ratio; explicit vs. recursive forms; linking exponentials to percent change.\n\nStudy focus: convert a word problem into a sequence or exponential model.\n\nCommon mistakes: using linear growth when the problem states repeated percent increases.\n\nExam tip: state whether a model is discrete (counts steps) or continuous (time flowing)."
+          "content": "Overview: Discrete sequences model steps; exponentials model constant proportional growth or decay over continuous time.\n\nKey ideas: arithmetic vs. geometric explicit/recursive; partial sums; finite geometric series; linking percent change to base (1+r).\n\nVocabulary & anchors: convergence/divergence language for infinite series (intro only).\n\nStudy focus: translate word problem to correct model type before algebra.\n\nCommon mistakes: linear fit to exponential data; off-by-one on first term index.\n\nExam tip: state domain (integer t vs. real t) when interpreting parameters."
+        },
+        {
+          "title": "AP Precalc — Polar & parametric (intro)",
+          "content": "Overview: Polar coordinates describe location by angle and radius; parametric equations separate x(t) and y(t) for motion paths.\n\nKey ideas: plotting (r, θ); multiple polar representations; converting polar ↔ rectangular; eliminating parameter for simple curves.\n\nVocabulary & anchors: limaçon/rose names optional; projectile motion as parametric intro.\n\nStudy focus: convert r = 2sin θ to rectangular form for a familiar circle case.\n\nCommon mistakes: negative r interpretations; assuming t is always time.\n\nExam tip: check domain of θ for full trace vs. trace segment."
         }
       ]
     },
@@ -155,11 +223,15 @@
       "topics": [
         {
           "title": "AP Chem — Atomic structure & periodicity",
-          "content": "Light and matter, quantization, electron configuration, periodic trends.\n\nKey ideas: ionization energy, atomic radius, electronegativity patterns; exceptions you can explain.\n\nStudy focus: compare two elements in the same period for size vs. IE.\n\nCommon mistakes: thinking higher IE always means “more reactive metals.”\n\nExam tip: tie trend direction to effective nuclear charge and shell shielding in one sentence."
+          "content": "Overview: Quantized light-matter interaction supports electron models; periodic trends summarize effective nuclear charge and shielding patterns—with known exceptions.\n\nKey ideas: photoelectric effect logic; emission/absorption spectra; electron configurations and ions; IE, atomic radius, electronegativity trends; periodicity anomalies (e.g., O vs. F IE).\n\nVocabulary & anchors: Aufbau exceptions (Cr, Cu as memorization); shielding vs. penetration (qualitative).\n\nStudy focus: compare Neighbor elements across a period for radius vs. IE with Zeff reasoning.\n\nCommon mistakes: more valence electrons does not always mean larger atom across periods.\n\nExam tip: one sentence linking trend direction to Zeff and shell added when going down a group."
         },
         {
           "title": "AP Chem — Stoichiometry & solutions",
-          "content": "Moles, limiting reactants, titration logic, concentration units, dilutions.\n\nKey ideas: mole roadmaps; M₁V₁ = M₂V₂ for dilution; percent yield vs. theoretical yield.\n\nStudy focus: identify the limiting reactant without arithmetic errors.\n\nCommon mistakes: confusing molarity with molality in lab contexts.\n\nExam tip: carry units through every line to catch flipped ratios early."
+          "content": "Overview: Mole bridges convert between mass, particles, and solution volumes; limiting reagent logic governs theoretical yield; titrations connect acid–base stoichiometry to concentration unknowns.\n\nKey ideas: roadmap; limiting reactant; percent yield; Molarity; serial dilution; titration equivalence point concept.\n\nVocabulary & anchors: standard solution; indicator role; back-titration (name only).\n\nStudy focus: multi-step limiting reagent with solution volume step.\n\nCommon mistakes: molarity vs. molality; volume additivity assumption.\n\nExam tip: carry units line-by-line; box final answer with correct sig figs rule stated once."
+        },
+        {
+          "title": "AP Chem — IMFs, phases, & properties",
+          "content": "Overview: Intermolecular forces determine boiling points, vapor pressure, and solubility “like dissolves like” trends; phase diagrams summarize equilibria.\n\nKey ideas: London dispersion scaling; dipole–dipole; hydrogen bonding conditions; VP–temperature relation; heating curves (plateaus).\n\nVocabulary & anchors: viscosity; surface tension; critical point (name).\n\nStudy focus: rank bp for similar MW molecules by IMF type.\n\nCommon mistakes: H-bond drawn through nonpolar H; confusing IMFs with intramolecular bonds.\n\nExam tip: label all IMFs present on a two-molecule diagram before comparing strength."
         }
       ]
     },
@@ -169,11 +241,15 @@
       "topics": [
         {
           "title": "AP Stats — Exploring one-variable data",
-          "content": "Distributions, center, spread, unusual values, and graphs that tell a truthful story.\n\nKey ideas: mean vs. median resistance; IQR and outliers; skew vs. symmetry.\n\nStudy focus: justify which measure of center matches a skewed salary distribution.\n\nCommon mistakes: calling any high value an “outlier” without a rule.\n\nExam tip: link graph shape to choice of summary statistics in one short paragraph."
+          "content": "Overview: Describing a distribution requires shape, center, spread, and unusual features; choice of summary depends on skew and outliers.\n\nKey ideas: stem/stot/histogram interpretation; mean vs. median resistance; standard deviation vs. IQR roles; boxplot fences for outliers (rule-dependent).\n\nVocabulary & anchors: modality; uniform vs. skewed; cumulative relative frequency.\n\nStudy focus: justify mean vs. median for right-skewed income data.\n\nCommon mistakes: outlier without rule; confusing range with IQR.\n\nExam tip: always mention context when comparing centers (“typical salary” vs. “mean salary”)."
+        },
+        {
+          "title": "AP Stats — Two-variable data & models",
+          "content": "Overview: Scatterplots reveal direction, form, strength, outliers; correlation measures linear association; regression predicts response with residual analysis.\n\nKey ideas: r properties and limitations; LSRL interpretation of slope/intercept; residual plots for nonlinearity; coefficient of determination language (intro).\n\nVocabulary & anchors: influential point vs. high leverage (conceptual); extrapolation risk.\n\nStudy focus: interpret slope in context with units (y-unit per x-unit).\n\nCommon mistakes: correlation implies causation; forcing linear model on curved data.\n\nExam tip: “For each additional X, predicted Y changes by b” template—customize to context."
         },
         {
           "title": "AP Stats — Designing studies & inference basics",
-          "content": "Sampling methods, experiments vs. observational studies, randomization, and the logic of confidence intervals and tests (intro).\n\nKey ideas: bias sources; blocking; placebo controls; scope of inference to populations/causes.\n\nStudy focus: explain why random assignment supports causation claims.\n\nCommon mistakes: generalizing beyond the sampled population.\n\nExam tip: name the study type before you interpret any p-value or interval."
+          "content": "Overview: Random sampling supports population inference; random assignment supports causal claims; bias and variability tradeoffs appear in every design critique.\n\nKey ideas: SRS, stratified, cluster (compare why use); blocking; placebo; double-blind; scope of inference table; p-value and confidence interval logic at conceptual level.\n\nVocabulary & anchors: confounding; placebo effect; nonresponse bias.\n\nStudy focus: identify whether a headline claim needs an experiment vs. observational evidence.\n\nCommon mistakes: generalizing beyond sampled population; “accept H₀” language.\n\nExam tip: first sentence of FRQ names study type and variable roles (explanatory/response)."
         }
       ]
     },
@@ -183,11 +259,85 @@
       "topics": [
         {
           "title": "AP Calc AB — Limits & continuity",
-          "content": "Limit intuition, one-sided limits, continuity conditions, removable discontinuities.\n\nKey ideas: limit laws; sandwich theorem at a high level; continuity on an interval.\n\nStudy focus: decide continuity at a piecewise junction using left/right limits.\n\nCommon mistakes: substituting into expressions that are undefined at the point.\n\nExam tip: show limit work even when the answer “looks obvious” from a graph."
+          "content": "Overview: Limits describe approaching behavior; continuity ties limits to function values and enables theorems about roots and extremes on intervals.\n\nKey ideas: limit laws; one-sided limits; infinite limits vs. limits at infinity; removable vs. jump vs. infinite discontinuities; IVT conditions.\n\nVocabulary & anchors: indeterminate forms; sandwich/squeeze at intro level.\n\nStudy focus: piecewise function—continuity at junction using left/right limits and f(c).\n\nCommon mistakes: plugging before checking domain; mixing limit at ∞ with horizontal asymptote conditions.\n\nExam tip: show limit notation even if graph suggests the answer."
         },
         {
           "title": "AP Calc AB — Derivatives as rates of change",
-          "content": "Derivative definition, basic rules, and interpreting f′ in context.\n\nKey ideas: power rule; product/quotient; units of a derivative; marginal cost/revenue intuition.\n\nStudy focus: compute a derivative and interpret the sign in a word problem.\n\nCommon mistakes: dropping inner factors in simple chain-rule cases.\n\nExam tip: when in doubt, write “units of derivative = units of output per unit of input.”"
+          "content": "Overview: Derivative as slope of tangent and as instantaneous rate; basic rules build models for motion, cost, and growth.\n\nKey ideas: limit definition (power examples); product/quotient/chain; implicit differentiation intro; related rates setup checklist.\n\nVocabulary & anchors: marginal cost/revenue as derivative interpretation; units on derivatives.\n\nStudy focus: interpret f′(a) sign and magnitude in applied sentence.\n\nCommon mistakes: chain rule inner derivative dropped; related rates missing similar triangle or constraint equation.\n\nExam tip: write “units of f′ are units of f per unit of x” once per problem."
+        },
+        {
+          "title": "AP Calc AB — Integrals & accumulation (intro)",
+          "content": "Overview: Antiderivatives reverse differentiation; definite integrals accumulate signed area and model net change when rate is known.\n\nKey ideas: FTC overview; average value of a function; area between curves setup; u-substitution pattern recognition (intro).\n\nVocabulary & anchors: initial condition for particular solution; displacement vs. distance from velocity.\n\nStudy focus: set up integral for shaded region with limits from intersections.\n\nCommon mistakes: negative area below x-axis ignored in total distance problems.\n\nExam tip: sketch integrand sign before evaluating definite integral for area interpretations."
+        }
+      ]
+    },
+    {
+      "id": "aplang",
+      "name": "AP English Language & Composition",
+      "topics": [
+        {
+          "title": "AP Lang — Rhetorical analysis foundations",
+          "content": "Overview: Writers choose strategies—appeals, structure, tone, and syntax—to move an audience; your job is to explain how choices create effects, not to agree/disagree casually.\n\nKey ideas: ethos/pathos/logos; occasion, audience, purpose; thesis = commentary on choices, not summary alone; line of reasoning.\n\nVocabulary & anchors: concession/refutation; anaphora, parallelism (recognize + effect); juxtaposition.\n\nStudy focus: write a two-chunk body paragraph: strategy name + quoted evidence + two sentences of effect on audience.\n\nCommon mistakes: feature spotting without linking to purpose; vague “appeals to emotion.”\n\nExam tip: start sentences with strong analytical verbs: “signals,” “frames,” “undercuts.”"
+        },
+        {
+          "title": "AP Lang — Argument & evidence",
+          "content": "Overview: Defensible claims need limits, evidence types, and acknowledgment of complexity; college-level argument weighs tradeoffs.\n\nKey ideas: qualifying thesis; types of evidence (anecdote, statistic, expert); addressing counterargument; avoiding hasty generalization.\n\nVocabulary & anchors: straw man vs. steel man (intro); warrant in Toulmin sense.\n\nStudy focus: outline a 40-minute argument with thesis + two body areas + rebuttal slot.\n\nCommon mistakes: thesis as mere opinion (“X is bad”); evidence dumps without reasoning.\n\nExam tip: one concrete example per body—not only hypotheticals."
+        }
+      ]
+    },
+    {
+      "id": "aplit",
+      "name": "AP English Literature & Composition",
+      "topics": [
+        {
+          "title": "AP Lit — Close reading & poetry",
+          "content": "Overview: Literary analysis ties diction, imagery, figurative language, and form to themes and tensions; poetry rewards attention to line breaks and meter where relevant.\n\nKey ideas: speaker vs. poet; tone shifts; symbol vs. motif; structure ( volta in sonnet, etc., when applicable).\n\nVocabulary & anchors: apostrophe, synecdoche (recognition level); ambiguity as interpretive space.\n\nStudy focus: write a thesis that names a pattern + a complexity (not one-word theme).\n\nCommon mistakes: plot summary; identifying devices without significance.\n\nExam tip: embed short quotations (≤1 line) and follow the 2:1 ratio—twice as much analysis as quote."
+        },
+        {
+          "title": "AP Lit — Fiction & drama",
+          "content": "Overview: Character desire, conflict, setting, and point of view shape meaning; drama adds staging, dialogue, and spectacle constraints.\n\nKey ideas: unreliable narrator signals; setting as pressure on choice; tragic flaw vs. situational irony (use texts carefully).\n\nVocabulary & anchors: foil; dramatic irony; exposition/rising action labels only when useful.\n\nStudy focus: trace one character change across two scenes with two cited moments.\n\nCommon mistakes: moralizing instead of analyzing; anachronistic standards.\n\nExam tip: Q3—pre-outline 5–7 works with themes you can defend in detail."
+        }
+      ]
+    },
+    {
+      "id": "apcsa",
+      "name": "AP Computer Science A (Java-style concepts)",
+      "topics": [
+        {
+          "title": "AP CSA — Objects & classes",
+          "content": "Overview: Object-oriented design bundles state (fields) and behavior (methods); constructors establish invariants; encapsulation hides internal detail.\n\nKey ideas: class vs. instance; public/private; mutators vs. accessors; this reference; overloaded constructors.\n\nVocabulary & anchors: static vs. instance; null reference risks; toString/equals contracts (intro).\n\nStudy focus: implement a small class (e.g., BankAccount) with deposit/withdraw and no negative balance rule.\n\nCommon mistakes: forgetting return type on getters; exposing mutable internal arrays.\n\nExam tip: trace memory with box-and-pointer diagrams for reference types."
+        },
+        {
+          "title": "AP CSA — Arrays, ArrayList, & algorithms",
+          "content": "Overview: Collections store sequences; standard algorithms traverse, search, and mutate with careful bounds and complexity intuition.\n\nKey ideas: 0-based indexing; enhanced for-loop vs. index loop; ArrayList methods; linear search; selection vs. insertion sort idea.\n\nVocabulary & anchors: off-by-one; defensive copying when returning internal collections.\n\nStudy focus: write method to remove all occurrences of value v without skipping after removal.\n\nCommon mistakes: Concurrent modification patterns; comparing arrays with ==.\n\nExam tip: write pre/post conditions in comments before coding FRQ-style methods."
+        }
+      ]
+    },
+    {
+      "id": "apphys1",
+      "name": "AP Physics 1: Algebra-Based",
+      "topics": [
+        {
+          "title": "AP Phys 1 — Kinematics & dynamics",
+          "content": "Overview: Motion diagrams and graphs link position, velocity, acceleration; Newton’s laws connect forces to motion vectors for particles and simple systems.\n\nKey ideas: SUVAT subset for constant a; projectile independence; free-body diagrams; friction models; Atwood/string tension patterns at intro.\n\nVocabulary & anchors: inertia; net force; apparent weight in accelerating elevator.\n\nStudy focus: multi-object system—identify third-law pairs vs. system external forces.\n\nCommon mistakes: mixing up velocity and acceleration directions; double-counting forces on a string.\n\nExam tip: draw FBD before choosing axis tilt for inclined planes."
+        },
+        {
+          "title": "AP Phys 1 — Energy & momentum",
+          "content": "Overview: Work–energy tracks scalar accumulation; momentum is conserved in isolated collisions; rotation adds torque and angular momentum later in course.\n\nKey ideas: work by constant force; kinetic energy; Hooke’s law spring PE; mechanical energy with nonconservative work; impulse-momentum theorem; elastic vs. inelastic collisions.\n\nVocabulary & anchors: negative work meaning; center of mass velocity for isolated system.\n\nStudy focus: energy bar charts for spring-mass oscillation qualitative cycles.\n\nCommon mistakes: using conservation of energy when friction does net work on system—check.\n\nExam tip: define system boundary before claiming momentum conservation."
+        }
+      ]
+    },
+    {
+      "id": "apes",
+      "name": "AP Environmental Science",
+      "topics": [
+        {
+          "title": "APES — Earth systems & ecology",
+          "content": "Overview: Matter cycles and energy flow connect sun to producers to consumers; populations interact through competition, predation, and symbiosis within changing abiotic constraints.\n\nKey ideas: primary productivity vs. biomass; trophic efficiency ~10% rule; carrying capacity; logistic growth; disturbance and succession (intro).\n\nVocabulary & anchors: keystone species; niche partitioning; albedo feedback (name).\n\nStudy focus: explain one human land-use change through a food-web consequence.\n\nCommon mistakes: sustainability as slogan only—tie to throughput limits.\n\nExam tip: label axes on population graphs (time vs. N or dN/dt vs. N for logistic)."
+        },
+        {
+          "title": "APES — Human impacts & policy",
+          "content": "Overview: Pollution, resource extraction, and climate-forcing emissions create tradeoffs; policy tools mix standards, taxes, cap-and-trade, and restoration.\n\nKey ideas: point vs. nonpoint source; PM2.5 health; greenhouse effect mechanism; mitigation vs. adaptation; tragedy of the commons applied to fisheries.\n\nVocabulary & anchors: externalized costs; environmental justice framing (define carefully).\n\nStudy focus: compare command-and-control vs. market incentive for one pollutant.\n\nCommon mistakes: conflating ozone hole with climate change mechanism.\n\nExam tip: use one quantitative magnitude as illustration (cite general ranges, not fake precision)."
         }
       ]
     }
