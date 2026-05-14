@@ -119,6 +119,9 @@
     if (al.length < 12 || bl.length < 12) return false;
     if (al === bl) return true;
     if (al.indexOf(bl) !== -1 || bl.indexOf(al) !== -1) return Math.min(al.length, bl.length) >= 18;
+    var short = al.length <= bl.length ? al : bl;
+    var long = al.length > bl.length ? al : bl;
+    if (short.length >= 14 && long.indexOf(short) === 0) return true;
     return false;
   }
 
@@ -190,6 +193,62 @@
       if (setA.has(w)) inter++;
     });
     return inter / (setQ.size + setA.size - inter);
+  }
+
+  function normMc(s) {
+    return String(s || "")
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function quizStemConflictsAnswer(question, answer) {
+    var q = normMc(question);
+    var a = normMc(answer);
+    if (!q || !a) return true;
+    if (q === a) return true;
+    if (q.indexOf("explain or recall") === 0) return true;
+    if (a.indexOf(q) !== -1 && q.length >= 18) return true;
+    if (q.indexOf(a) !== -1 && a.length >= 22) return true;
+    if (qaTokenOverlap(question, answer) > 0.38) return true;
+    return false;
+  }
+
+  var FALLBACK_DISTRACTORS_MC = [
+    "Not stated in these notes.",
+    "A different concept from another section.",
+    "The opposite of what the material describes.",
+  ];
+
+  function finalizeMcOptions(correct, distractorPool) {
+    var correctText = String(correct || "").trim();
+    var used = new Set();
+    if (correctText) used.add(normMc(correctText));
+    var out = [{ text: correctText || "(missing)", correct: true }];
+    for (var wi = 0; wi < distractorPool.length; wi++) {
+      if (out.length >= 4) break;
+      var t = String(distractorPool[wi] || "").trim();
+      var n = normMc(t);
+      if (!n || used.has(n) || answersTooSimilar(correctText, t)) continue;
+      used.add(n);
+      out.push({ text: t, correct: false });
+    }
+    var pad = 0;
+    while (out.length < 4) {
+      var f = FALLBACK_DISTRACTORS_MC[pad++ % FALLBACK_DISTRACTORS_MC.length];
+      var fn = normMc(f);
+      if (!used.has(fn)) {
+        used.add(fn);
+        out.push({ text: f, correct: false });
+      }
+      if (pad > 30) break;
+    }
+    while (out.length < 4) {
+      out.push({ text: "Other (" + out.length + ")", correct: false });
+    }
+    return out.sort(function () {
+      return Math.random() - 0.5;
+    });
   }
 
   function ensureDistinctAnswer(q, answer, fullChunk, segments) {
@@ -329,65 +388,74 @@
     return { chunks: chunks, flashcards: flashcards };
   }
 
-  const FALLBACK_DISTRACTORS = [
-    "Not stated in these notes.",
-    "A different concept from another section.",
-    "The opposite of what the material describes.",
-  ];
-
-  /** One multiple-choice question per card; distractors from other cards or fallbacks. */
+  /** One multiple-choice question per card; wrong answers stolen from other cards when possible. */
   function buildQuiz(cards) {
-    const answers = cards.map(function (c) {
+    if (!Array.isArray(cards) || cards.length === 0) return [];
+    var pool = [];
+    for (var pi = 0; pi < cards.length; pi++) {
+      var c = cards[pi];
+      if (
+        c &&
+        String(c.a || "").trim().length > 10 &&
+        !quizStemConflictsAnswer(String(c.q || ""), String(c.a || ""))
+      ) {
+        pool.push(c);
+      }
+    }
+    var source = pool.length >= 2 ? pool : [];
+    if (source.length === 0) {
+      for (var si = 0; si < cards.length; si++) {
+        var cx = cards[si];
+        if (cx && String(cx.a || "").trim().length > 6) source.push(cx);
+      }
+    }
+    if (source.length === 0) return [];
+
+    var answers = source.map(function (c) {
       return c.a;
     });
-    const quiz = [];
-    for (let i = 0; i < cards.length; i++) {
-      const correct = cards[i].a;
-      const distractors = answers
+    var quiz = [];
+    for (var i = 0; i < source.length; i++) {
+      var correct = source[i].a;
+      var distractors = answers
         .filter(function (_, j) {
           return j !== i;
         })
         .sort(function () {
           return Math.random() - 0.5;
         })
-        .slice(0, 3);
-      let safety = 0;
-      while (distractors.length < 3 && answers.length > 1 && safety++ < 20) {
-        const extra = answers[Math.floor(Math.random() * answers.length)];
-        if (extra !== correct && distractors.indexOf(extra) === -1) distractors.push(extra);
+        .slice(0, 12);
+      var filtered = [];
+      for (var di = 0; di < distractors.length; di++) {
+        if (filtered.length >= 8) break;
+        var d = distractors[di];
+        if (!answersTooSimilar(correct, d) && !filtered.some(function (x) { return normMc(x) === normMc(d); })) {
+          filtered.push(d);
+        }
       }
-      for (let fi = 0; fi < FALLBACK_DISTRACTORS.length; fi++) {
-        const f = FALLBACK_DISTRACTORS[fi];
-        if (distractors.length >= 3) break;
-        if (f !== correct && distractors.indexOf(f) === -1) distractors.push(f);
-      }
-      var filtered = distractors.filter(function (d) {
-        return !answersTooSimilar(correct, d);
-      });
       var fillTries = 0;
-      while (filtered.length < 3 && answers.length > 1 && fillTries++ < 40) {
+      while (filtered.length < 8 && answers.length > 1 && fillTries++ < 50) {
         var extra = answers[Math.floor(Math.random() * answers.length)];
         if (
           extra !== correct &&
           filtered.indexOf(extra) === -1 &&
-          !answersTooSimilar(correct, extra)
+          !answersTooSimilar(correct, extra) &&
+          !filtered.some(function (x) { return normMc(x) === normMc(extra); })
         ) {
           filtered.push(extra);
         }
       }
-      while (filtered.length < 3) {
-        var fb = null;
-        for (let fi = 0; fi < FALLBACK_DISTRACTORS.length; fi++) {
-          var cand = FALLBACK_DISTRACTORS[fi];
-          if (cand !== correct && filtered.indexOf(cand) === -1) {
-            fb = cand;
-            break;
-          }
+      for (var fi = 0; fi < FALLBACK_DISTRACTORS_MC.length; fi++) {
+        if (filtered.length >= 8) break;
+        var ff = FALLBACK_DISTRACTORS_MC[fi];
+        if (ff !== correct && filtered.indexOf(ff) === -1 && !filtered.some(function (x) { return normMc(x) === normMc(ff); })) {
+          filtered.push(ff);
         }
-        if (!fb) break;
-        filtered.push(fb);
       }
-      var question = cards[i].q;
+      var question = String(source[i].q || "").trim();
+      if (quizStemConflictsAnswer(question, correct)) {
+        question = "Which statement matches this idea from your notes?";
+      }
       var cor = (correct || "").trim();
       if (cor.length >= 24) {
         var ql = question.toLowerCase();
@@ -399,18 +467,11 @@
           }
         }
       }
-      var options = [{ text: correct, correct: true }].concat(
-        filtered.slice(0, 3).map(function (t) {
-          return { text: t, correct: false };
-        })
-      );
-      options.sort(function () {
-        return Math.random() - 0.5;
-      });
+      var options = finalizeMcOptions(correct, filtered);
       quiz.push({
         question: question,
         options: options,
-        topicKey: cards[i].topicKey,
+        topicKey: source[i].topicKey,
       });
     }
     return quiz.sort(function () {
@@ -884,6 +945,78 @@
   var NO_VERBATIM_QUIZ_RULES =
     "CRITICAL: Do not copy sentences or long phrases from STUDENT_NOTES. Paraphrase every question and every answer option in fresh wording. Test understanding of ideas, not recognition of exact wording.";
 
+  function normQuizOpt(s) {
+    return String(s || "")
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function dedupeAiMcOptions(rawOpts, correctIndex) {
+    var o = [];
+    for (var ri = 0; ri < rawOpts.length; ri++) {
+      o.push(String(rawOpts[ri]).trim());
+    }
+    o = o.filter(function (s) {
+      return s.length > 0;
+    });
+    if (o.length < 2) return null;
+    var ci = Math.min(o.length - 1, Math.max(0, Number(correctIndex) || 0));
+    var correctStr = o[ci];
+    var correctNorm = normQuizOpt(correctStr);
+    var seen = new Set();
+    var uniq = [];
+    for (var ui = 0; ui < o.length; ui++) {
+      var n = normQuizOpt(o[ui]);
+      if (!n || seen.has(n)) continue;
+      seen.add(n);
+      uniq.push(o[ui]);
+    }
+    var correctPos = -1;
+    for (var vi = 0; vi < uniq.length; vi++) {
+      if (normQuizOpt(uniq[vi]) === correctNorm) {
+        correctPos = vi;
+        break;
+      }
+    }
+    if (correctPos < 0) {
+      uniq.unshift(correctStr);
+      correctPos = 0;
+      seen.add(correctNorm);
+    }
+    var PAD = [
+      "Not stated in these notes.",
+      "Only partly supported by the notes.",
+      "Misstates the relationship the notes describe.",
+      "Describes a different case than the notes emphasize.",
+    ];
+    var pi = 0;
+    while (uniq.length < 4) {
+      var p = PAD[pi++ % PAD.length];
+      var pn = normQuizOpt(p);
+      if (!seen.has(pn)) {
+        seen.add(pn);
+        uniq.push(p);
+      }
+      if (pi > 20) break;
+    }
+    var four = uniq.slice(0, 4);
+    correctPos = 0;
+    for (var fi = 0; fi < four.length; fi++) {
+      if (normQuizOpt(four[fi]) === correctNorm) {
+        correctPos = fi;
+        break;
+      }
+    }
+    if (correctPos < 0) correctPos = 0;
+    var tagged = four.map(function (text, i) {
+      return { text: text, correct: i === correctPos };
+    });
+    return tagged.sort(function () {
+      return Math.random() - 0.5;
+    });
+  }
+
   function mapParsedQuestionsToItems(parsed, defaultTopicKey) {
     var qs = parsed && parsed.questions;
     if (!Array.isArray(qs) || qs.length === 0) {
@@ -902,22 +1035,14 @@
       }
       opts = opts.filter(function (s) {
         return s.length > 0;
-      }).slice(0, 4);
+      });
       if (qText.length < 3 || opts.length < 2) continue;
-      while (opts.length < 4) opts.push("(option)");
-      var idx = Math.min(3, Math.max(0, Number(q.correctIndex) || 0));
+      var deduped = dedupeAiMcOptions(opts, q.correctIndex);
+      if (!deduped) continue;
       var topicKey = typeof q.topicKey === "string" && q.topicKey ? q.topicKey : defaultTopicKey;
-      var tagged = opts.map(function (text, i) {
-        return { text: text, correct: i === idx };
-      });
-      var shuffled = tagged.sort(function () {
-        return Math.random() - 0.5;
-      });
       items.push({
         question: qText,
-        options: shuffled.map(function (x) {
-          return { text: x.text, correct: x.correct };
-        }),
+        options: deduped,
         topicKey: topicKey,
       });
     }

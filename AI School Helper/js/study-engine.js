@@ -92,7 +92,66 @@ function answersTooSimilar(a, b) {
   if (al.length < 12 || bl.length < 12) return false;
   if (al === bl) return true;
   if (al.includes(bl) || bl.includes(al)) return Math.min(al.length, bl.length) >= 18;
+  const short = al.length <= bl.length ? al : bl;
+  const long = al.length > bl.length ? al : bl;
+  if (short.length >= 14 && long.startsWith(short)) return true;
   return false;
+}
+
+function normMc(s) {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** MC stem would trivialize the item (stem repeats the fact being tested). */
+function quizStemConflictsAnswer(question, answer) {
+  const q = normMc(question);
+  const a = normMc(answer);
+  if (!q || !a) return true;
+  if (q === a) return true;
+  if (q.startsWith("explain or recall")) return true;
+  if (a.includes(q) && q.length >= 18) return true;
+  if (q.includes(a) && a.length >= 22) return true;
+  if (qaTokenOverlap(question, answer) > 0.38) return true;
+  return false;
+}
+
+const FALLBACK_DISTRACTORS = [
+  "Not stated in these notes.",
+  "A different concept from another section.",
+  "The opposite of what the material describes.",
+];
+
+/** Four unique MC rows with exactly one correct; shuffle order. */
+function finalizeMcOptions(correct, distractorPool) {
+  const correctText = String(correct || "").trim();
+  const used = new Set();
+  if (correctText) used.add(normMc(correctText));
+  const out = [{ text: correctText || "(missing)", correct: true }];
+  for (const w of distractorPool) {
+    if (out.length >= 4) break;
+    const t = String(w || "").trim();
+    const n = normMc(t);
+    if (!n || used.has(n) || answersTooSimilar(correctText, t)) continue;
+    used.add(n);
+    out.push({ text: t, correct: false });
+  }
+  let pad = 0;
+  while (out.length < 4) {
+    const f = FALLBACK_DISTRACTORS[pad++ % FALLBACK_DISTRACTORS.length];
+    const fn = normMc(f);
+    if (!used.has(fn)) {
+      used.add(fn);
+      out.push({ text: f, correct: false });
+    }
+    if (pad > 30) break;
+  }
+  while (out.length < 4) {
+    out.push({ text: `Other (${out.length})`, correct: false });
+  }
+  return out.sort(() => Math.random() - 0.5);
 }
 
 /** Stable key for weak-topic tracking (same topic → same bucket). */
@@ -302,49 +361,54 @@ export function buildStudyMaterial(content, idPrefix) {
  * @param {{ q: string, a: string }[]} cards
  * @returns {{ question: string, options: { text: string, correct: boolean }[], topicKey?: string }[] }
  */
-const FALLBACK_DISTRACTORS = [
-  "Not stated in these notes.",
-  "A different concept from another section.",
-  "The opposite of what the material describes.",
-];
-
 /** One MC question per card; wrong answers stolen from other cards when possible. */
 export function buildQuiz(cards) {
-  const answers = cards.map((c) => c.a);
+  if (!Array.isArray(cards) || cards.length === 0) return [];
+  const pool = cards.filter(
+    (c) =>
+      c &&
+      String(c.a || "").trim().length > 10 &&
+      !quizStemConflictsAnswer(String(c.q || ""), String(c.a || ""))
+  );
+  const source = pool.length >= 2 ? pool : cards.filter((c) => c && String(c.a || "").trim().length > 6);
+  if (source.length === 0) return [];
+
+  const answers = source.map((c) => c.a);
   const quiz = [];
-  for (let i = 0; i < cards.length; i++) {
-    const correct = cards[i].a;
+  for (let i = 0; i < source.length; i++) {
+    const correct = source[i].a;
     const distractors = answers
       .filter((_, j) => j !== i)
       .sort(() => Math.random() - 0.5)
-      .slice(0, 3);
-    let safety = 0;
-    while (distractors.length < 3 && answers.length > 1 && safety++ < 20) {
-      const extra = answers[Math.floor(Math.random() * answers.length)];
-      if (extra !== correct && !distractors.includes(extra)) distractors.push(extra);
+      .slice(0, 12);
+    const filtered = [];
+    for (const d of distractors) {
+      if (filtered.length >= 8) break;
+      if (!answersTooSimilar(correct, d) && !filtered.some((x) => normMc(x) === normMc(d))) filtered.push(d);
     }
-    for (const f of FALLBACK_DISTRACTORS) {
-      if (distractors.length >= 3) break;
-      if (f !== correct && !distractors.includes(f)) distractors.push(f);
-    }
-    const filtered = distractors.filter((d) => !answersTooSimilar(correct, d));
     let fillTries = 0;
-    while (filtered.length < 3 && answers.length > 1 && fillTries++ < 40) {
+    while (filtered.length < 8 && answers.length > 1 && fillTries++ < 50) {
       const extra = answers[Math.floor(Math.random() * answers.length)];
       if (
         extra !== correct &&
         !filtered.includes(extra) &&
-        !answersTooSimilar(correct, extra)
+        !answersTooSimilar(correct, extra) &&
+        !filtered.some((x) => normMc(x) === normMc(extra))
       ) {
         filtered.push(extra);
       }
     }
-    while (filtered.length < 3) {
-      const f = FALLBACK_DISTRACTORS.find((x) => x !== correct && !filtered.includes(x));
-      if (!f) break;
-      filtered.push(f);
+    for (const f of FALLBACK_DISTRACTORS) {
+      if (filtered.length >= 8) break;
+      if (f !== correct && !filtered.includes(f) && !filtered.some((x) => normMc(x) === normMc(f))) {
+        filtered.push(f);
+      }
     }
-    let question = cards[i].q;
+
+    let question = String(source[i].q || "").trim();
+    if (quizStemConflictsAnswer(question, correct)) {
+      question = "Which statement matches this idea from your notes?";
+    }
     const cor = (correct || "").trim();
     if (cor.length >= 24) {
       const ql = question.toLowerCase();
@@ -356,13 +420,11 @@ export function buildQuiz(cards) {
         }
       }
     }
-    const options = [{ text: correct, correct: true }, ...filtered.slice(0, 3).map((t) => ({ text: t, correct: false }))].sort(
-      () => Math.random() - 0.5
-    );
+    const options = finalizeMcOptions(correct, filtered);
     quiz.push({
       question,
       options,
-      topicKey: cards[i].topicKey,
+      topicKey: source[i].topicKey,
     });
   }
   return quiz.sort(() => Math.random() - 0.5);
